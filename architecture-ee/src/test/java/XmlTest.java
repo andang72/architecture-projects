@@ -58,7 +58,7 @@ public class XmlTest {
 		
 	}
 	
-	@Test
+	
 	public void fileMonitorTest() throws Exception{
 		
 		Configuration config = new Configuration();
