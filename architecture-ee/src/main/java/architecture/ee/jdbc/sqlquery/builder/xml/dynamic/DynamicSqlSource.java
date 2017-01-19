@@ -35,8 +35,7 @@ public class DynamicSqlSource implements SqlSource {
 
 	private List<ResultMapping> resultMappings;
 
-	public DynamicSqlSource(Configuration configuration, SqlNode rootSqlNode, List<ParameterMapping> parameterMappings,
-			List<ResultMapping> resultMappings) {
+	public DynamicSqlSource(Configuration configuration, SqlNode rootSqlNode, List<ParameterMapping> parameterMappings,	List<ResultMapping> resultMappings) {
 		this.configuration = configuration;
 		this.rootSqlNode = rootSqlNode;
 		this.parameterMappings = parameterMappings;
@@ -46,10 +45,11 @@ public class DynamicSqlSource implements SqlSource {
 	public BoundSql getBoundSql(Object parameterObject) {
 		// 1. 동적 쿼리 생성을 위한 컨텍스트 객체를 생성한다.
 		DynamicContext context;
-		if (parameterObject == null)
+		if (parameterObject == null){
 			context = new DynamicContext();
-		else
+		}else{
 			context = new DynamicContext(parameterObject);
+		}
 		// 2. 동적 쿼리를 생성한다.
 		rootSqlNode.apply(context);
 		// 3. 최종 쿼리를 리턴한다.

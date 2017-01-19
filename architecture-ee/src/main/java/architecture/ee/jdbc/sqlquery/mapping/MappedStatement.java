@@ -128,7 +128,7 @@ public class MappedStatement {
 		return boundSql;
 	}
 
-	public BoundSql getBoundSql(Object parameterObject, Object additionalParameters) {
+	public BoundSql getBoundSql(Object parameterObject, Object additionalParameters) {		
 		
 		if (additionalParameters instanceof Map) {
 			return sqlSource.getBoundSql(parameterObject, (Map) additionalParameters);
@@ -137,5 +137,6 @@ public class MappedStatement {
 			params.put("additional_parameter", additionalParameters);
 			return sqlSource.getBoundSql(parameterObject, params);
 		}
+		
 	}
 }

@@ -18,7 +18,9 @@
 		<parameterMapping index="1" name="TABLE_NAME"
 			jdbcType="VARCHAR" />
 		<![CDATA[
+		
 			select table_name from tabs where table_name = ?
+	    
 	    ]]>
 	</sql-query>
 

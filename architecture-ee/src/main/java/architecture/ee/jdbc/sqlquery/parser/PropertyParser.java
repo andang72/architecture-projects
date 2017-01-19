@@ -70,8 +70,7 @@ public class PropertyParser {
 
 		public VariableTokenHandler(Properties variables) {
 			this.variables = variables;
-			this.enableDefaultValue = Boolean
-					.parseBoolean(getPropertyValue(KEY_ENABLE_DEFAULT_VALUE, ENABLE_DEFAULT_VALUE));
+			this.enableDefaultValue = Boolean.parseBoolean(getPropertyValue(KEY_ENABLE_DEFAULT_VALUE, ENABLE_DEFAULT_VALUE));
 			this.defaultValueSeparator = getPropertyValue(KEY_DEFAULT_VALUE_SEPARATOR, DEFAULT_VALUE_SEPARATOR);
 
 		}

@@ -29,9 +29,10 @@ public class VariableMapImpl implements VariableMap {
 		variables = new HashMap<String, String>();
 	}
 
-	public VariableMapImpl(Properties props) {
+	public VariableMapImpl(Properties properties) {
 		variables = new HashMap<String, String>();
-		variables.putAll((Map) props);
+		for (final String name: properties.stringPropertyNames())
+			variables.put(name, properties.getProperty(name));
 	}
 
 	public VariableMapImpl(Map<String, String> variables) {
@@ -42,45 +43,46 @@ public class VariableMapImpl implements VariableMap {
 		return substitute(expression, variables);
 	}
 
-	void append(StringBuffer stringbuffer, String s, int i, int j) {
+	void append(StringBuffer stringbuffer, String string, int i, int j) {
 		if (j < 0)
-			j = s.length() - i;
+			j = string.length() - i;
 		stringbuffer.ensureCapacity(stringbuffer.length() + j);
 		j += i;
 		for (int k = i; k < j; k++)
-			stringbuffer.append(s.charAt(k));
+			stringbuffer.append(string.charAt(k));
 
 	}
 
-	String expand(String str, int i, int j, Map<String, String> map, Map<String, String> map1) throws IllegalArgumentException {
+	String expand(String string, int start, int end, Map<String, String> map, Map<String, String> map1) throws IllegalArgumentException {
+		
 		StringBuffer stringbuffer = new StringBuffer();
-		for (int l = i; l < j; l++) {
-			int k = str.indexOf('$', l);
-			append(stringbuffer, str, l, k - l);
-			if (k == -1)
+		
+		for (int i = start; i < end; i++) {
+			int indexOf = string.indexOf('$', i);
+			append(stringbuffer, string, i, indexOf - i);
+			if (indexOf == -1)
 				break;
-			l = k + 1;
-			if (l >= j)
+			i = indexOf + 1;
+			if (i >= end)
 				continue;
-			switch (str.charAt(l)) {
-			case 36: // '$'
+			switch (string.charAt(i)) {
+			case 36: // '$' 0x24 36
 				stringbuffer.append('$');
 				break;
-
-			case 40: // '('
-			case 123: // '{'
-				char c = str.charAt(l);
+			case 40: // '(' 0x28 40
+			case 123: // '{' 0x7B 123
+				char c = string.charAt(i);
 				byte byte0 = ((byte) (c != '(' ? 125 : 41));
-				int i1 = l + 1;
-				int j1 = str.indexOf(byte0, i1);
+				int i1 = i + 1;
+				int j1 = string.indexOf(byte0, i1);
 				if (j1 == -1)
 					throw new IllegalArgumentException("unterminated variable reference");
-				l = indexOf(str, '$', i1, j1);
-				if (l != -1) {
-					i1 = l + 1;
+				i = indexOf(string, '$', i1, j1);
+				if (i != -1) {
+					i1 = i + 1;
 					int k1 = 0;
-					for (l = i1; l < str.length(); l++) {
-						char c2 = str.charAt(l);
+					for (i = i1; i < string.length(); i++) {
+						char c2 = string.charAt(i);
 						if (c2 == c) {
 							k1++;
 							continue;
@@ -91,17 +93,18 @@ public class VariableMapImpl implements VariableMap {
 
 					String s1;
 					if (k1 < 0)
-						s1 = expand(str, i1, l, map, map1);
+						s1 = expand(string, i1, i, map, map1);
+					
 				} else {
-					l = j1;
+					i = j1;
 				}
-				referenceVariable(stringbuffer, str, i1, j1 - i1, map, map1);
+				referenceVariable(stringbuffer, string, i1, j1 - i1, map, map1);
 				break;
 
 			default:
-				char c1 = str.charAt(l);
+				char c1 = string.charAt(i);
 				if (!Character.isWhitespace(c1))
-					referenceVariable(stringbuffer, str, l, 1, map, map1);
+					referenceVariable(stringbuffer, string, i, 1, map, map1);
 				break;
 			}
 		}
@@ -154,11 +157,11 @@ public class VariableMapImpl implements VariableMap {
 		}
 	}
 
-	public String substitute(String s, Map<String, String> map) throws IllegalArgumentException {
-		if (s == null){
+	public String substitute(String string, Map<String, String> map) throws IllegalArgumentException {
+		if (string == null){
 			return null;
 		}else{
-			return expand(s, 0, s.length(), map, new HashMap<String, String>());
+			return expand(string, 0, string.length(), map, new HashMap<String, String>());
 		}
 	}
 }

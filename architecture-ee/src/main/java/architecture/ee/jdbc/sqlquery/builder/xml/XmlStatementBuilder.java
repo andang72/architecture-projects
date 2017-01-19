@@ -180,8 +180,7 @@ public class XmlStatementBuilder extends AbstractBuilder {
 		for (int i = 0; i < children.getLength(); i++) {
 			XNode child = node.newXNode(children.item(i));
 			String nodeName = child.getNode().getNodeName();
-			if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE
-					|| child.getNode().getNodeType() == Node.TEXT_NODE) {
+			if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
 				String data = child.getStringBody("");
 				contents.add(new TextSqlNode(data));
 			} else {

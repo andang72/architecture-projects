@@ -34,11 +34,10 @@ public class DynamicSqlNode implements SqlNode {
 	protected Logger log = LoggerFactory.getLogger(getClass());
 	private static BeansWrapper wrapper = new BeansWrapper();
 	private String text;
-	private Language language;
+	private Language language = Language.FREEMARKER;
 
 	public DynamicSqlNode(String text) {
 		this.text = text;
-		this.language = Language.FREEMARKER;
 	}
 
 	/**
@@ -54,9 +53,9 @@ public class DynamicSqlNode implements SqlNode {
 
 		if (additionalParameterObject != null) {
 			if (additionalParameterObject instanceof Map)
-				map.putAll((Map) additionalParameterObject);
+				map.putAll((Map)additionalParameterObject);
 			else
-				map.put("additional_parameter", additionalParameterObject);
+				map.put("additional_parameters", additionalParameterObject);
 		}
 
 		/**
@@ -64,14 +63,15 @@ public class DynamicSqlNode implements SqlNode {
 		 */
 		if (parameterObject != null) {
 			if (parameterObject instanceof Map) {
-				map.put("parameters", parameterObject);
-			} else if (parameterObject instanceof MapSqlParameterSource) {
-				map.put("parameters", ((MapSqlParameterSource) parameterObject).getValues());
-			} else if (parameterObject instanceof Object[]) {
+				map.putAll((Map)parameterObject);
+				//map.put("parameters", parameterObject);
+			} else if (parameterObject instanceof MapSqlParameterSource) {								
+				map.putAll(((MapSqlParameterSource) parameterObject).getValues());
+				//map.put("parameters", ((MapSqlParameterSource) parameterObject).getValues());				
+			} else {
 				map.put("parameters", parameterObject);
 			}
 		}
-
 		context.appendSql(processTemplate(map));
 		return true;
 	}
@@ -86,19 +86,21 @@ public class DynamicSqlNode implements SqlNode {
 		VELOCITY, FREEMARKER
 	}
 
-	protected String processTemplate(Map<String, Object> map) {
+	protected String processTemplate(Map<String, Object> model) {
 		StringReader reader = new StringReader(text);
 		StringWriter writer = new StringWriter();
-		try {
-			populateStatics(map);
-			freemarker.template.SimpleHash root = new freemarker.template.SimpleHash();
-			root.putAll(map);
-			freemarker.template.Template template = new freemarker.template.Template("dynamic", reader, null);
-			template.process(root, writer);
-		} catch (IOException e) {
-			log.error("", e);
-		} catch (TemplateException e) {
-			log.error("", e);
+		if( language == Language.FREEMARKER ){
+			try {
+				populateStatics(model);
+				freemarker.template.SimpleHash root = new freemarker.template.SimpleHash();
+				root.putAll(model);
+				freemarker.template.Template template = new freemarker.template.Template("dynamic", reader, null);
+				template.process(root, writer);
+			} catch (IOException e) {
+				log.error("", e);
+			} catch (TemplateException e) {
+				log.error("", e);
+			}
 		}
 		return writer.toString();
 	}
@@ -109,7 +111,7 @@ public class DynamicSqlNode implements SqlNode {
 			model.put("enums", enumModels);
 		} catch (UnsupportedOperationException e) {
 		}
-		TemplateHashModel staticModels = wrapper.getStaticModels();
+		//TemplateHashModel staticModels = wrapper.getStaticModels();
 		model.put("statics", BeansWrapper.getDefaultInstance().getStaticModels());
 	}
 }
