@@ -1,0 +1,184 @@
+/**
+ *    Copyright 2015-2017 donghyuck
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+package architecture.ee.jdbc.sqlquery.scanner;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+
+import architecture.ee.jdbc.sqlquery.builder.BuilderException;
+import architecture.ee.jdbc.sqlquery.builder.xml.XmlSqlSetBuilder;
+import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
+
+public class DirectoryScanner {
+	
+	private static Logger log = LoggerFactory.getLogger(DirectoryScanner.class);
+	
+	private static final int DEFAULT_POOL_INTERVAL_MILLIS = 10000;
+	
+	private int pollIntervalMillis = DEFAULT_POOL_INTERVAL_MILLIS;
+	
+	private SqlQueryFactory sqlQueryFactory;
+	
+	private FileAlterationMonitor monitor;
+	
+	private String directory;
+
+	public int getPollIntervalMillis() {
+		return pollIntervalMillis;
+	}
+
+	public void setPollIntervalMillis(int pollIntervalMillis) {
+		this.pollIntervalMillis = pollIntervalMillis;
+	}
+
+	public SqlQueryFactory getSqlQueryFactory() {
+		return sqlQueryFactory;
+	}
+
+	public void setSqlQueryFactory(SqlQueryFactory sqlQueryFactory) {
+		this.sqlQueryFactory = sqlQueryFactory;
+	}
+
+	public String getDirectory() {
+		return directory;
+	}
+
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
+
+	public void initialize() {		
+		log.debug("initialize sqlquery directory scanner : '{}'" , directory);
+		
+		ResourceLoader loader = new FileSystemResourceLoader();	
+		Resource resource = loader.getResource(directory);		
+		
+		try {
+			buildFromDirectory(resource.getFile());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+		
+		try {
+			monitor = new FileAlterationMonitor(pollIntervalMillis);		
+			FileAlterationObserver observer = new FileAlterationObserver(resource.getFile(), FileFilterUtils.suffixFileFilter(sqlQueryFactory.getConfiguration().getSuffix()));
+			observer.addListener(new DirectoryListener(sqlQueryFactory));
+			monitor.addObserver(observer);			
+			start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void start() throws Exception {
+		log.debug("start sqlquery directory scanner...");
+		if( monitor != null)
+		{
+			monitor.start();
+		}
+	}
+
+	
+	public void destroy() throws Exception {	
+		log.debug("stop sqlquery directory scanner...");
+		if( monitor != null)
+		{
+			monitor.stop();
+		}
+	}
+		
+	protected void buildFromDirectory(File file) throws BuilderException {
+		for( File f : FileUtils.listFiles(file, FileFilterUtils.suffixFileFilter(sqlQueryFactory.getConfiguration().getSuffix()), FileFilterUtils.trueFileFilter())){			
+			if( !sqlQueryFactory.getConfiguration().isResourceLoaded(f.toURI().toString())){
+				log.debug("building " + f.toURI().toString());
+				try {					
+					XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(f), sqlQueryFactory.getConfiguration(), f.toURI().toString(), null);
+					builder.parse();
+				} catch (IOException e) {
+					throw new BuilderException("build faild", e);
+				}	
+			}
+		}
+	}
+	
+	protected static class DirectoryListener implements FileAlterationListener {
+
+		private SqlQueryFactory sqlQueryFactory;
+		
+		
+		public DirectoryListener(SqlQueryFactory sqlQueryFactory) {
+			this.sqlQueryFactory = sqlQueryFactory;
+		}
+
+		public void onStart(FileAlterationObserver observer) {			
+		}
+
+		public void onDirectoryCreate(File directory) {		
+		}
+
+		public void onDirectoryChange(File directory) {			
+		}
+
+		public void onDirectoryDelete(File directory) {
+		}
+
+		public void onFileCreate(File file) {
+			log.debug("new {}", file.toURI().toString());
+			buildFromFile(file);
+		}
+
+		public void onFileChange(File file) {
+			log.debug("change {}", file.toURI().toString());
+			buildFromFile(file);
+		}
+
+		public void onFileDelete(File file) {	
+			log.debug("remove {}", file.toURI().toString());
+			if (sqlQueryFactory.getConfiguration().isResourceLoaded(file.toURI().toString())) {
+				sqlQueryFactory.getConfiguration().removeLoadedResource(file.toURI().toString());
+			}
+		}		
+		
+
+		public void onStop(FileAlterationObserver observer) {	
+			
+		}				
+		
+		protected void buildFromFile(File file) throws BuilderException {
+			try {
+				XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(file), sqlQueryFactory.getConfiguration(), file.toURI().toString(), null);
+				builder.parse();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				throw new BuilderException("build faild", e);
+			}
+		}		
+		
+	}
+	
+}
