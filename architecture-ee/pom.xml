@@ -20,7 +20,11 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>${project.dependency.spring.version}</version>
 		</dependency>
-
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context-support</artifactId>
+		    <version>${project.dependency.spring.version}</version>
+		</dependency>
 		<dependency>
 		    <groupId>commons-io</groupId>
 		    <artifactId>commons-io</artifactId>
