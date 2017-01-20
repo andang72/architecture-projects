@@ -16,10 +16,8 @@
 
 package architecture.ee.jdbc.sqlquery.factory;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +35,13 @@ import architecture.ee.util.StringUtils;
 
 public class Configuration {
 
+	public static final String DEFAULT_FILE_SUFFIX = "sqlset.xml";
+	
+	private String prefix = "";
+
+    private String suffix = DEFAULT_FILE_SUFFIX;
+    
+	
 	protected Integer defaultStatementTimeout;
 
 	protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
@@ -61,6 +66,23 @@ public class Configuration {
 	/** A map holds statement nodes for a namespace. */
 	protected final ConcurrentMap<String, List<XNode>> statementNodesToParse = new ConcurrentHashMap<String, List<XNode>>();
 
+	
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = (prefix != null ? prefix : "");
+	}
+	
+	public void setSuffix(String suffix) {
+		this.suffix = (suffix != null ? suffix : "");
+	}
+	
 	public void addMappedStatement(MappedStatement statement) {
 		mappedStatements.put(statement.getId(), statement);
 	}
@@ -102,6 +124,17 @@ public class Configuration {
 		throw new SqlNotFoundException( "" );
 	}
 
+	public boolean hasStatement(String statementName) {
+		return hasStatement(statementName, true);
+	}
+
+	public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
+		if (validateIncompleteStatements) {
+			buildAllStatements();
+		}
+		return mappedStatements.containsKey(statementName);
+	}
+	  
 	
 	protected void buildAllStatements() {			
 			

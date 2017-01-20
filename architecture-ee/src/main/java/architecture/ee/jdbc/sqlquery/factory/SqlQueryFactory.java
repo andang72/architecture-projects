@@ -22,6 +22,8 @@ import org.springframework.jdbc.object.SqlQuery;
 
 public interface SqlQueryFactory {
 
+	public Configuration getConfiguration();
+	
     public abstract SqlQuery createSqlQuery(DataSource dataSource);
     
 }

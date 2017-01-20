@@ -32,18 +32,11 @@ import architecture.ee.jdbc.sqlquery.factory.Configuration;
 import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
 
 public class SqlQueryFactoryImpl implements SqlQueryFactory {
-
-	public static final String DEFAULT_FILE_SUFFIX = "sqlset.xml";
-
 	protected Logger log = LoggerFactory.getLogger(getClass());
 
 	private final Configuration configuration;
 
 	private List<String> resourceLocations;
-
-	private String prefix = "";
-
-    private String suffix = DEFAULT_FILE_SUFFIX;
     
 	
 	public SqlQueryFactoryImpl(Configuration configuration) {
@@ -56,22 +49,7 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 		}
 	}
 	
-	public String getPrefix() {
-		return prefix;
-	}
 
-	public String getSuffix() {
-		return suffix;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = (prefix != null ? prefix : "");
-	}
-	
-	public void setSuffix(String suffix) {
-		this.suffix = (suffix != null ? suffix : "");
-	}
-	
 	public List<String> getResourceLocations() {
 		return resourceLocations;
 	}
@@ -87,13 +65,19 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 	protected void buildFromResourceLocations() {
 		DefaultResourceLoader loader = new DefaultResourceLoader();
 		for (String location : resourceLocations) {
-			Resource resource = loader.getResource(location);
+			Resource resource = loader.getResource(location);			
 			if (resource.exists() && !isResourceLoaded( resource ) ) {
-				buildFromResource(resource);
+				try {
+					log.debug("building {}", resource.getURI().toString() );
+					XmlSqlSetBuilder builder = new XmlSqlSetBuilder(resource.getInputStream(), configuration, resource.getURI().toString(), null);
+					builder.parse();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					throw new BuilderException("build faild", e);
+				}
 			}
 		}
 	}
-
 	
 	protected boolean isResourceLoaded( Resource resource ){
 		try {
@@ -101,16 +85,6 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 		} catch (IOException e) {
 			return false;
 		}		
-	}
-	
-	protected void buildFromResource(Resource resource) throws BuilderException {
-		try {
-			XmlSqlSetBuilder builder = new XmlSqlSetBuilder(resource.getInputStream(), configuration, resource.getURI().toString(), null);
-			builder.parse();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			throw new BuilderException("build faild", e);
-		}
 	}
 
 	public SqlQuery createSqlQuery(DataSource dataSource) {

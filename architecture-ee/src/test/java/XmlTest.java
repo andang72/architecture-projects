@@ -65,7 +65,7 @@ public class XmlTest {
 		SqlQueryFactoryImpl impl = new SqlQueryFactoryImpl(config);
 		File directory = new File("src/test/resources");
 		
-		for( File f : FileUtils.listFiles(directory, FileFilterUtils.suffixFileFilter(impl.getSuffix()), FileFilterUtils.trueFileFilter())){
+		for( File f : FileUtils.listFiles(directory, FileFilterUtils.suffixFileFilter(config.getSuffix()), FileFilterUtils.trueFileFilter())){
 			
 			System.out.println( f.toURI().toString());			
 		}
@@ -75,7 +75,7 @@ public class XmlTest {
 		
 		
 		FileAlterationMonitor monitor = new FileAlterationMonitor(1000L);		
-		FileAlterationObserver observer = new FileAlterationObserver(directory, FileFilterUtils.suffixFileFilter(impl.getSuffix()));
+		FileAlterationObserver observer = new FileAlterationObserver(directory, FileFilterUtils.suffixFileFilter(config.getSuffix()));
 		observer.addListener(new FileAlterationListener(){
 			public void onStart(FileAlterationObserver observer) {
 				
