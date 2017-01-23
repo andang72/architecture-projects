@@ -17,18 +17,9 @@
      <beans:bean id="eventBus" class="com.google.common.eventbus.EventBus">
      	<!-- <beans:constructor-arg index="0" value="serviceEventBus" /> -->
      </beans:bean>              
-     
-     <beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
-     	<beans:property name="resourceLocations">
-     		<beans:list>
-     			<beans:value>common-sqlset.xml</beans:value>
-     		</beans:list>
-     	</beans:property>
+          
+     <beans:bean id="repository"
+     	class="architecture.ee.component.RepositoryImpl"
+     	autowire-candidate="default">
      </beans:bean>
-     <beans:bean id="sqlQueryDirectoryScanner" class="architecture.ee.jdbc.sqlquery.scanner.DirectoryScanner" p:sqlQueryFactory-ref="sqlQueryFactory" depends-on="sqlQueryFactory" init-method="initialize" destroy-method="destroy">
-     	<beans:property name="directory" value="src/test/resources"></beans:property>
-     </beans:bean>
-     
-     
-     
 </beans:beans> 
