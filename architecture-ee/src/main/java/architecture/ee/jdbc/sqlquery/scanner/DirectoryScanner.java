@@ -174,7 +174,6 @@ public class DirectoryScanner {
 				XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(file), sqlQueryFactory.getConfiguration(), file.toURI().toString(), null);
 				builder.parse();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				throw new BuilderException("build faild", e);
 			}
 		}		
