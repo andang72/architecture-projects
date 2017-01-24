@@ -1,11 +1,16 @@
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
+import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
 
 /**
  *    Copyright 2015-2017 donghyuck
@@ -23,9 +28,14 @@ import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
  *    limitations under the License.
  */
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath:application-context.xml"})
 public class SqlQueryTest {
 
 	private static Logger log = LoggerFactory.getLogger(SqlQueryTest.class);
+	
+	@Autowired
+    private SqlQueryFactory sqlQueryFactory;
 	
     private static ClassPathXmlApplicationContext context = null;
     
@@ -35,12 +45,9 @@ public class SqlQueryTest {
 	} 
 	
 	@Test
-	public void createSqlQueryFactory(){
-		
-		System.out.println(context.getBean(SqlQueryFactory.class, "sqlQueryFactory").hashCode() );
-		System.out.println(context.getBean(SqlQueryFactory.class, "sqlQueryFactory").hashCode() );
-		System.out.println(context.getBean(SqlQueryFactory.class, "sqlQueryFactory").hashCode() );
-		System.out.println(context.getBean(SqlQueryFactory.class, "sqlQueryFactory").hashCode() );
+	public void createSqlQueryFactory(){		
+		for(MappedStatement ms : sqlQueryFactory.getConfiguration().getMappedStatements())
+			System.out.println(ms.getId() + ":" + ms.getResource());
 	}
 
 	
