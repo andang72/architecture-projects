@@ -109,7 +109,8 @@ public class XmlTest {
 	public static final void main(String args[]) throws Exception{
 		
 		XmlTest t = new XmlTest();
-		t.fileMonitorTest();		
+		t.fileMonitorTest();	
+		
 	}
 
 }
