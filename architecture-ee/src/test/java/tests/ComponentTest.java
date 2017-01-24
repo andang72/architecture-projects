@@ -1,6 +1,8 @@
 package tests;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -30,12 +32,14 @@ import architecture.ee.service.Repository;
 @ContextConfiguration(locations={"classpath:application-context2.xml"})
 public class ComponentTest {
 	
+	private static Logger log = LoggerFactory.getLogger(ComponentTest.class);
+	
 	@Autowired
     private Repository repository;
 	
 	@Test
 	public void testRepository(){
-		System.out.println("repository:" + repository.getFile("config"));		
-		System.out.println("repository:" + repository.getConfigRoot().getRootURI());		
+		log.debug("repository config={}", repository.getFile("config"));
+		log.debug("repository root={}", repository.getConfigRoot().getRootURI());		
 	}
 }

@@ -1,12 +1,9 @@
 package tests;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -38,23 +35,12 @@ public class SqlQueryTest {
 	@Autowired
     private SqlQueryFactory sqlQueryFactory;
 	
-    private static ClassPathXmlApplicationContext context = null;
-    
-	@BeforeClass 
-	public static void setUpBeforeClass() throws Exception {
-		context = new ClassPathXmlApplicationContext("application-context.xml");
-	} 
 	
 	@Test
 	public void createSqlQueryFactory(){		
 		for(MappedStatement ms : sqlQueryFactory.getConfiguration().getMappedStatements())
-			System.out.println(ms.getId() + ":" + ms.getResource());
+			log.debug("Mapped Statement id={}, resource={}", ms.getId(),  ms.getResource());		
 	}
 
-	
-	@AfterClass 
-	public static void tearDownAfterClass() throws Exception {		
-		
-	} 
 
 }

@@ -13,6 +13,8 @@ import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
@@ -37,26 +39,24 @@ import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
 
 public class XmlTest {
 	
+	private static Logger log = LoggerFactory.getLogger(XmlTest.class);
+	
 	@Test
 	public void loadXml() throws IOException{
 		
 		DefaultResourceLoader loader = new DefaultResourceLoader();			
+		
 		Configuration config = new Configuration();
 		SqlQueryFactoryImpl impl = new SqlQueryFactoryImpl(config);
 		impl.setResourceLocations(new ArrayList<String>());
 		impl.getResourceLocations().add("common-sqlset.xml");
 		impl.getResourceLocations().add("common-sqlset.xml");
 		impl.initialize();
-				
-		//XmlSqlSetBuilder builder = new XmlSqlSetBuilder(is, config, resource.getURI().toString(), null);
-		//builder.parse();
-		
+
 		for( MappedStatement ms : config.getMappedStatements()  )
 		{
-			System.out.println( ms.getId() + " : " + ms.getResource());
-		}
-		
-		
+			log.debug(" id = {}, resource = {}",  ms.getId() , ms.getResource() );			
+		}		
 	}
 	
 	
@@ -67,8 +67,7 @@ public class XmlTest {
 		File directory = new File("src/test/resources");
 		
 		for( File f : FileUtils.listFiles(directory, FileFilterUtils.suffixFileFilter(config.getSuffix()), FileFilterUtils.trueFileFilter())){
-			
-			System.out.println( f.toURI().toString());			
+			log.debug("file={}", f.toURI().toString() );	
 		}
 		
 		impl.setResourceLocations(new ArrayList<String>());
@@ -82,29 +81,29 @@ public class XmlTest {
 				
 			}
 			public void onDirectoryCreate(File directory) {
-				System.out.println("onDirectoryCreate:");
+				log.debug("onDirectoryCreate:");
 			}
 			public void onDirectoryChange(File directory) {
-				System.out.println("onDirectoryChange:");
+				log.debug("onDirectoryChange:");
 			}
 			public void onDirectoryDelete(File directory) {
-				System.out.println("onDirectoryDelete:");
+				log.debug("onDirectoryDelete:");
 			}
 			public void onFileCreate(File file) {
-				System.out.println("onFileCreate:");
+				log.debug("onFileCreate:");
 			}
 			public void onFileChange(File file) {
-				System.out.println("onFileChange:");
+				log.debug("onFileChange:");
 			}
 			public void onFileDelete(File file) {
-				System.out.println("onFileDelete:");
+				log.debug("onFileDelete:");
 			}
 			public void onStop(FileAlterationObserver observer) {
 								
 			}});
 		monitor.addObserver(observer);
 		monitor.start();		
-		System.out.println("Current working directory : " + directory.getAbsolutePath());
+		log.debug("Current working directory : {} ", directory.getAbsolutePath());
 	} 
 	
 	public static final void main(String args[]) throws Exception{
