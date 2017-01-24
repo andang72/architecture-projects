@@ -15,23 +15,27 @@
  */
 package architecture.ee.util;
 
-import java.util.Properties;
-
-import architecture.ee.component.VariableMapImpl;
-import architecture.ee.service.VariableMap;
-
-public class StringUtils extends org.springframework.util.StringUtils {
-
-	public static String expend(String expression, Properties props) {
-		VariableMap variables = new VariableMapImpl(props);
-		return variables.expand(expression);
+public class NumberUtils {
+	public static int toInt(final String str, final int defaultValue) {
+		if (str == null) {
+			return defaultValue;
+		}
+		try {
+			return Integer.parseInt(str);
+		} catch (final NumberFormatException nfe) {
+			return defaultValue;
+		}
 	}
+	
+	public static long toLong(final String str, final long defaultValue) {
+        if (str == null) {
+            return defaultValue;
+        }
+        try {
+            return Long.parseLong(str);
+        } catch (final NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
 
-	public static boolean isNullOrEmpty(String str) {
-		return com.google.common.base.Strings.isNullOrEmpty(str);
-	}
-
-	public static String defaultString(final String str, final String defaultStr) {
-		return str == null ? defaultStr : str;
-	}
 }

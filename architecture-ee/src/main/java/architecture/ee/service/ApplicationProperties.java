@@ -13,25 +13,24 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package architecture.ee.util;
+package architecture.ee.service;
 
-import java.util.Properties;
+import java.util.Collection;
+import java.util.Map;
 
-import architecture.ee.component.VariableMapImpl;
-import architecture.ee.service.VariableMap;
+public interface ApplicationProperties extends Map<String, String>  {
+	
+	public abstract Collection<String> getChildrenNames(String name);
 
-public class StringUtils extends org.springframework.util.StringUtils {
+	public abstract Collection<String> getPropertyNames();
 
-	public static String expend(String expression, Properties props) {
-		VariableMap variables = new VariableMapImpl(props);
-		return variables.expand(expression);
-	}
+	public abstract boolean getBooleanProperty(String name);
 
-	public static boolean isNullOrEmpty(String str) {
-		return com.google.common.base.Strings.isNullOrEmpty(str);
-	}
+	public abstract boolean getBooleanProperty(String name, boolean defaultValue);
 
-	public static String defaultString(final String str, final String defaultStr) {
-		return str == null ? defaultStr : str;
-	}
+	public abstract int getIntProperty(String name, int defaultValue);
+
+	public abstract long getLongProperty(String name, long defaultValue);
+
+	public abstract String getStringProperty(String name, String defaultValue);
 }
