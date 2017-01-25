@@ -13,11 +13,16 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+                                
+     <beans:bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" p:corePoolSize="5" p:maxPoolSize="10" p:queueCapacity="25" />
                                     
-     <beans:bean id="eventBus" class="com.google.common.eventbus.EventBus">
-     	<!-- <beans:constructor-arg index="0" value="serviceEventBus" /> -->
+     <beans:bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus">
+     	<beans:constructor-arg index="0" ref="taskExecutor" />
      </beans:bean>              
+     
+     <beans:bean id="adminService" class="architecture.ee.component.AdminServiceImpl" ></beans:bean>
           
-     <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" >
-     </beans:bean>
+     <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" ></beans:bean>
+     
+     
 </beans:beans> 

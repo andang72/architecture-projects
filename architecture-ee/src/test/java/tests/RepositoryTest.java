@@ -1,6 +1,8 @@
 package tests;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.google.common.eventbus.Subscribe;
+
+import architecture.ee.component.State;
+import architecture.ee.component.event.StateChangeEvent;
+import architecture.ee.service.AdminService;
 import architecture.ee.service.Repository;
 
 /**
@@ -30,6 +37,7 @@ import architecture.ee.service.Repository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration("WebContent/")
 @ContextConfiguration(locations={"classpath:application-context2.xml"})
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RepositoryTest {
 	
 	private static Logger log = LoggerFactory.getLogger(RepositoryTest.class);
@@ -37,9 +45,31 @@ public class RepositoryTest {
 	@Autowired
     private Repository repository;
 	
+	@Autowired
+    private AdminService adminService;
+	
 	@Test
 	public void testRepository(){
 		log.debug("repository config path : {}", repository.getFile("config"));
 		log.debug("startup properties : {}", repository.getSetupApplicationProperties());		
+	}
+	
+	@Test 
+	public void test01(){
+		adminService.registerEventListener(new StateChangeEventListener());				
+	}
+	
+	@Test
+	public void test02(){
+		adminService.fireStateChangeEvent("REPOSITORY", State.NONE, State.STARTING );
+	}
+	
+	class StateChangeEventListener {
+		
+		@Subscribe 
+		public void handel(StateChangeEvent e) {
+		    log.debug("************** {} {}", e.getSource(), e.toString());
+		}
+		
 	}
 }
