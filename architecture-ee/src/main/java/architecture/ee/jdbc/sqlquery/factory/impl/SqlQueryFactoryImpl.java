@@ -22,10 +22,15 @@ import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.object.SqlQuery;
 
+import com.google.common.eventbus.EventBus;
+
+import architecture.ee.component.State;
+import architecture.ee.component.event.StateChangeEvent;
 import architecture.ee.jdbc.sqlquery.builder.BuilderException;
 import architecture.ee.jdbc.sqlquery.builder.xml.XmlSqlSetBuilder;
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
@@ -38,16 +43,25 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 
 	private List<String> resourceLocations;
 	
+	@Autowired( required = false )
+	private EventBus eventBus;
+	
 	
 	public SqlQueryFactoryImpl(Configuration configuration) {
 		this.configuration = configuration;
 	}
 
+	
+	
 	public void initialize() {
+		
+		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZING);
 		
 		if (resourceLocations!=null && resourceLocations.size() > 0){
 			buildFromResourceLocations();
 		}
+		
+		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZED);
 		
 	}
 	
@@ -64,6 +78,12 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 		return configuration;
 	}
 
+	protected void fireStateChangeEvent(Object soruce, State oldState, State newState) {
+		if( eventBus != null)
+			eventBus.post(new StateChangeEvent( soruce, oldState, newState));
+	}
+	
+	
 	protected void buildFromResourceLocations() {
 		DefaultResourceLoader loader = new DefaultResourceLoader();
 		for (String location : resourceLocations) {
