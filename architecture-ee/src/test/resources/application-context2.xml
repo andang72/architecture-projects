@@ -18,8 +18,6 @@
      	<!-- <beans:constructor-arg index="0" value="serviceEventBus" /> -->
      </beans:bean>              
           
-     <beans:bean id="repository"
-     	class="architecture.ee.component.RepositoryImpl"
-     	autowire-candidate="default">
+     <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" >
      </beans:bean>
 </beans:beans> 

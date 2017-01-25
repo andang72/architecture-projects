@@ -13,7 +13,10 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-                                    
+
+     <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" >
+     </beans:bean>
+                                         
      <beans:bean id="eventBus" class="com.google.common.eventbus.EventBus">
      	<!-- <beans:constructor-arg index="0" value="serviceEventBus" /> -->
      </beans:bean>              
@@ -21,12 +24,12 @@
      <beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
      	<beans:property name="resourceLocations">
      		<beans:list>
-     			<beans:value>common-sqlset.xml</beans:value>
+     			<beans:value>${services.sql.location}</beans:value>
      		</beans:list>
      	</beans:property>
      </beans:bean>
      <beans:bean id="sqlQueryDirectoryScanner" class="architecture.ee.jdbc.sqlquery.scanner.DirectoryScanner" p:sqlQueryFactory-ref="sqlQueryFactory" depends-on="sqlQueryFactory" init-method="initialize" destroy-method="destroy">
-     	<beans:property name="directory" value="src/test/resources"></beans:property>
+     	<beans:property name="directory" value="${services.sql.location}"></beans:property>
      </beans:bean>
      
      

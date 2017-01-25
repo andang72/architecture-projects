@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +51,23 @@ import org.slf4j.LoggerFactory;
 import com.google.common.xml.XmlEscapers;
 
 import architecture.ee.util.ApplicationConstants;
-
+/**
+ * Provides the the ability to use simple XML property files. Each property is
+ * in the form X.Y.Z, which would map to an XML snippet of:
+ * <pre>
+ * &lt;X&gt;
+ *     &lt;Y&gt;
+ *         &lt;Z&gt;someValue&lt;/Z&gt;
+ *     &lt;/Y&gt;
+ * &lt;/X&gt;
+ * </pre>
+ * The XML file is passed in to the constructor and must be readable and
+ * writable. Setting property values will automatically persist those value
+ * to disk. The file encoding used is UTF-8.
+ *
+ * @author Derek DeMoro
+ * @author Iain Shigeoka
+ */
 public class XmlProperties {
 
 	private static final Logger log = LoggerFactory.getLogger(XmlProperties.class);
@@ -131,7 +148,7 @@ public class XmlProperties {
 
 		Reader reader = null;
 		try {
-			reader = new InputStreamReader(new FileInputStream(file), ApplicationConstants.DEFAULT_CHAR_ENCODING);
+			reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
 			buildDoc(reader);
 		} catch (Exception e) {
 			// log.error(L10NUtils.format("002154", file.getName(),

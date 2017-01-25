@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
 import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
@@ -27,6 +28,7 @@ import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration("WebContent/")
 @ContextConfiguration(locations={"classpath:application-context.xml"})
 public class SqlQueryTest {
 

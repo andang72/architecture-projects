@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-public class EmptyApplicationProperties extends AbstractApplicationProperties {
+import architecture.ee.service.ApplicationProperties;
+
+public class EmptyApplicationProperties implements ApplicationProperties {
 
 	private static class InstanceHolder {
 
@@ -31,6 +33,7 @@ public class EmptyApplicationProperties extends AbstractApplicationProperties {
 	}
 
 	private EmptyApplicationProperties() {
+		
 	}
 
 	public static EmptyApplicationProperties getInstance() {
@@ -93,6 +96,22 @@ public class EmptyApplicationProperties extends AbstractApplicationProperties {
 
 	public String getStringProperty(String name, String defaultValue) {
 		return defaultValue;
+	}
+
+	public boolean getBooleanProperty(String name) {
+		return false;
+	}
+
+	public boolean getBooleanProperty(String name, boolean defaultValue) {
+		return false;
+	}
+
+	public int getIntProperty(String name, int defaultValue) {
+		return 0;
+	}
+
+	public long getLongProperty(String name, long defaultValue) {
+		return 0;
 	}
 
 }

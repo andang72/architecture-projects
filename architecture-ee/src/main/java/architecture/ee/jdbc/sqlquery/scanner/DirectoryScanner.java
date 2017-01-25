@@ -26,13 +26,16 @@ import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResourceLoader;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import architecture.ee.component.VariableMapImpl;
 import architecture.ee.jdbc.sqlquery.builder.BuilderException;
 import architecture.ee.jdbc.sqlquery.builder.xml.XmlSqlSetBuilder;
 import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
+import architecture.ee.service.Repository;
+import architecture.ee.util.StringUtils;
 
 public class DirectoryScanner {
 	
@@ -46,7 +49,18 @@ public class DirectoryScanner {
 	
 	private FileAlterationMonitor monitor;
 	
+	private ResourceLoader resourceLoader; 
+	
+	@Autowired( required = true)
+	private Repository repository;
+	
 	private String directory;
+
+	
+	
+	public DirectoryScanner() {
+		this.resourceLoader = new FileSystemResourceLoader();	
+	}
 
 	public int getPollIntervalMillis() {
 		return pollIntervalMillis;
@@ -72,35 +86,62 @@ public class DirectoryScanner {
 		this.directory = directory;
 	}
 
-	public void initialize() {		
-		log.debug("initialize sqlquery directory scanner : '{}'" , directory);
-		
-		ResourceLoader loader = new FileSystemResourceLoader();	
-		Resource resource = loader.getResource(directory);		
-		
-		try {
-			buildFromDirectory(resource.getFile());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
-		
-		try {
-			monitor = new FileAlterationMonitor(pollIntervalMillis);		
-			FileAlterationObserver observer = new FileAlterationObserver(resource.getFile(), FileFilterUtils.suffixFileFilter(sqlQueryFactory.getConfiguration().getSuffix()));
-			observer.addListener(new DirectoryListener(sqlQueryFactory));
-			monitor.addObserver(observer);			
-			start();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void initialize() {				
+				
+		File directoryFile = null ;		
+		if( !StringUtils.isNullOrEmpty(directory)){			
+			VariableMapImpl impl = new VariableMapImpl(repository.getSetupApplicationProperties());
+			String path = impl.expand(directory);
+			log.debug("initializing scanner : {} > '{}'" , directory, path);
+			if( StringUtils.startsWithIgnoreCase(path, "file:")){					
+				try {
+					directoryFile = resourceLoader.getResource(path).getFile();
+				} catch (IOException e) { /* ignore */ }					
+			}else{
+				directoryFile = repository.getFile(path);
+			}
+			
+//			
+//			if (directory.startsWith("${") && directory.endsWith("}")) {
+//				
+//				
+//				
+//				String key = directory.substring(directory.indexOf('{') + 1, directory.indexOf('}')).trim();
+//				
+//				String value = repository.getSetupApplicationProperties().getStringProperty(key, null);			
+//				
+//				log.debug("{} searching in setup porpertise ... > {} = {}", directory, key, value);
+//				
+//				if( StringUtils.startsWithIgnoreCase(value, "file:")){					
+//					try {
+//						directoryFile = resourceLoader.getResource(value).getFile();
+//					} catch (IOException e) {
+//					}					
+//				}else{
+//					directoryFile = repository.getFile(value);
+//				}
+//			}
 		}
+		log.debug("starting directory scanner : '{}'" , directory, directoryFile);	
+		if( directoryFile != null)
+			try {
+				buildFromDirectory(directoryFile);
+				start(directoryFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}			
 	}
 	
-	public void start() throws Exception {
+	public void start(File file ) throws Exception {
 		log.debug("start sqlquery directory scanner...");
-		if( monitor != null)
-		{
-			monitor.start();
+		if( monitor == null)
+		{			
+			monitor = new FileAlterationMonitor(pollIntervalMillis);	
+			FileAlterationObserver observer = new FileAlterationObserver(file, FileFilterUtils.suffixFileFilter(sqlQueryFactory.getConfiguration().getSuffix()));
+			observer.addListener(new DirectoryListener(sqlQueryFactory));
+			monitor.addObserver(observer);			
 		}
+		monitor.start();
 	}
 
 	

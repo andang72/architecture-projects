@@ -16,11 +16,17 @@
 package architecture.ee.component;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.ServletContext;
 
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -28,8 +34,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.ServletContextResource;
 
+import architecture.ee.service.ApplicationProperties;
 import architecture.ee.service.ConfigRoot;
 import architecture.ee.service.Repository;
+import architecture.ee.util.ApplicationConstants;
 
 public class RepositoryImpl implements Repository, ServletContextAware {
 
@@ -39,10 +47,18 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 
 	private Resource rootResource = getRootResource();
 
+	private ApplicationProperties setupProperties = null;
+	
+	
+	public void initialize(){
+		if(initailized.get()) {			
+			log.debug("initialized");
+		}
+	}
+	
 	public void setServletContext(ServletContext servletContext) {
 		if (!initailized.get()) {
 			ServletContextResource resource = new ServletContextResource(servletContext, "/WEB-INF");
-			
 			try {
 				File file = resource.getFile();
 				log.debug("repository exists : " + file.exists());
@@ -62,8 +78,13 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 
 	public ConfigRoot getConfigRoot() {
 		try {
-			Resource child = getRootResource().createRelative("config");
+			File file = new File( getRootResource().getFile() , "config" );
+			Resource child = new FileSystemResource(file);
+			
 			log.debug("config exists : " + child.exists());
+			
+			
+			
 			return new ConfigRootImpl(child);
 		} catch (Exception e) {
 			return null;
@@ -78,10 +99,96 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 
 	public File getFile(String name) {
 		try {			
-			return getRootResource().createRelative(name).getFile();
+			File file = new File( getRootResource().getFile() , name );
+			return file;
 		} catch (IOException e) {
 		}
 		return null;
+	}
+	
+	public ApplicationProperties getSetupApplicationProperties() {
+		if (setupProperties == null) {
+			if(initailized.get()){
+				File file = getFile(ApplicationConstants.DEFAULT_STARTUP_FILENAME);
+				if (!file.exists()){
+					
+					boolean error = false;
+				    // create default file...
+				    log.debug("No startup file now create !!! {}", file.getAbsolutePath());
+				    Writer writer = null;
+				    try {
+				    	writer = new OutputStreamWriter(new FileOutputStream(file),	StandardCharsets.UTF_8);
+				    	XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
+				    	StringBuilder sb = new StringBuilder();
+						org.dom4j.Document document = org.dom4j.DocumentHelper.createDocument();
+						org.dom4j.Element root = document.addElement("startup-config");
+						// setup start
+						// ------------------------------------------------------------
+						org.dom4j.Element setupNode = root.addElement("setup");
+						setupNode.addElement("complete").setText("false");
+						// setup end
+						
+						// license start
+						org.dom4j.Element licenseNode = root.addElement("license");
+						// license end
+						
+						// view start
+						/*
+						org.dom4j.Element viewNode = root.addElement("view");
+						org.dom4j.Element renderNode = viewNode.addElement("render");
+						org.dom4j.Element freemarkerNode = renderNode.addElement("freemarker");
+						freemarkerNode.addElement("enabled").setText("true");
+						freemarkerNode.addElement("source").addElement("location");
+						org.dom4j.Element velocityNode = renderNode.addElement("velocity");
+						velocityNode.addElement("enabled").setText("false");
+						*/
+						// view end
+						
+						// security start
+						org.dom4j.Element securityNode = root.addElement("security");
+						securityNode.addElement("authentication").addElement("encoding").addElement("algorithm").setText("SHA-256");
+						// security end
+	
+						// scripting start
+						/**
+						org.dom4j.Element scriptingNode = root.addElement("scripting");
+						org.dom4j.Element groovyNode = scriptingNode.addElement("groovy");
+						groovyNode.addElement("debug").setText("false");
+						org.dom4j.Element sourceGroovyNode = groovyNode.addElement("source");
+						sourceGroovyNode.addElement("location");
+						sourceGroovyNode.addElement("encoding").setText(ApplicationConstants.DEFAULT_CHAR_ENCODING);
+						sourceGroovyNode.addElement("recompile").setText("true");
+						*/
+						// scripting end
+						// database start
+						//org.dom4j.Element databaseNode = root.addElement("database");
+						// database end
+						xmlWriter.write(document);
+					    } catch (Exception e) {
+					    	log.error("fail to making {} - {}", file.getName(), e.getMessage());				    	
+					    	error = true;
+					    } finally {
+						try {
+						    writer.flush();
+						    writer.close();
+						} catch (Exception e) {
+						    log.error("error" , e);
+						    error = true;
+						}
+				    }	
+				}else{
+					try {
+						log.debug("load from {}", file.getAbsolutePath() );
+						this.setupProperties = new ApplicationPropertiesImpl(file);
+					} catch (IOException e) {
+						 log.error("error" , e);
+					}
+				}
+			}else{
+				return EmptyApplicationProperties.getInstance();
+			}
+		}
+		return setupProperties ;
 	}
 
 }

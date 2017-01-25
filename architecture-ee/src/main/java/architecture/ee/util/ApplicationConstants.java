@@ -17,7 +17,6 @@ package architecture.ee.util;
 
 public class ApplicationConstants {
 
-	public static final String DEFAULT_CHAR_ENCODING = "UTF-8";
-	
+	public static final String DEFAULT_STARTUP_FILENAME = "startup-config.xml";
 	
 }
