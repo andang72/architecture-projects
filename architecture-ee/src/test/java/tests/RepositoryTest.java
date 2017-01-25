@@ -30,16 +30,16 @@ import architecture.ee.service.Repository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration("WebContent/")
 @ContextConfiguration(locations={"classpath:application-context2.xml"})
-public class ComponentTest {
+public class RepositoryTest {
 	
-	private static Logger log = LoggerFactory.getLogger(ComponentTest.class);
+	private static Logger log = LoggerFactory.getLogger(RepositoryTest.class);
 	
 	@Autowired
     private Repository repository;
 	
 	@Test
 	public void testRepository(){
-		log.debug("repository config={}", repository.getFile("config"));
-		log.debug("repository root={}", repository.getConfigRoot().getRootURI());		
+		log.debug("repository config path : {}", repository.getFile("config"));
+		log.debug("startup properties : {}", repository.getSetupApplicationProperties());		
 	}
 }
