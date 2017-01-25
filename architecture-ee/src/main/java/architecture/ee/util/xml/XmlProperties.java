@@ -49,8 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.xml.XmlEscapers;
-
-import architecture.ee.util.ApplicationConstants;
 /**
  * Provides the the ability to use simple XML property files. Each property is
  * in the form X.Y.Z, which would map to an XML snippet of:

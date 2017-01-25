@@ -39,6 +39,11 @@ import architecture.ee.service.ConfigRoot;
 import architecture.ee.service.Repository;
 import architecture.ee.util.ApplicationConstants;
 
+/**
+ * 
+ * @author donghyuck
+ *
+ */
 public class RepositoryImpl implements Repository, ServletContextAware {
 
 	private AtomicBoolean initailized = new AtomicBoolean(false);

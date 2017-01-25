@@ -26,7 +26,11 @@ import architecture.ee.service.ApplicationProperties;
 import architecture.ee.util.NumberUtils;
 import architecture.ee.util.StringUtils;
 import architecture.ee.util.xml.XmlProperties;
-
+/**
+ * 
+ * @author donghyuck
+ *
+ */
 public class ApplicationPropertiesImpl implements ApplicationProperties {
 	
 	private XmlProperties properties;
