@@ -37,16 +37,18 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 	private final Configuration configuration;
 
 	private List<String> resourceLocations;
-    
+	
 	
 	public SqlQueryFactoryImpl(Configuration configuration) {
 		this.configuration = configuration;
 	}
 
 	public void initialize() {
+		
 		if (resourceLocations!=null && resourceLocations.size() > 0){
 			buildFromResourceLocations();
 		}
+		
 	}
 	
 
