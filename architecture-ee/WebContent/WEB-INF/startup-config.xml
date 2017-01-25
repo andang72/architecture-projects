@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<startup-config>
+  <setup>
+    <complete>false</complete>
+  </setup>
+  <license/>
+  <security>
+    <authentication>
+      <encoding>
+        <algorithm>SHA-256</algorithm>
+      </encoding>
+    </authentication>
+  </security>
+  <services>
+  	<sql>
+  		<location>sql</location>  		
+  	</sql>
+  </services>
+</startup-config>
