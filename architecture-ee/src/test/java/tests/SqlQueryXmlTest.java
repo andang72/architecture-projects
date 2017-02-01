@@ -30,9 +30,9 @@ import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration("WebContent/")
 @ContextConfiguration(locations={"classpath:application-context.xml"})
-public class SqlQueryTest {
+public class SqlQueryXmlTest {
 
-	private static Logger log = LoggerFactory.getLogger(SqlQueryTest.class);
+	private static Logger log = LoggerFactory.getLogger(SqlQueryXmlTest.class);
 	
 	@Autowired
     private SqlQueryFactory sqlQueryFactory;
