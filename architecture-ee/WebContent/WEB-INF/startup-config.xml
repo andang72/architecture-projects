@@ -5,6 +5,14 @@
   </setup>
   <license/>
   <security>
+  	<encrypt>
+  		<algorithm>Blowfish</algorithm>
+  		<key><current/></key>
+  		<property>
+  			<name>password</name>
+  			<name>username</name>
+  		</property>
+  	</encrypt>  	
     <authentication>
       <encoding>
         <algorithm>SHA-256</algorithm>
@@ -15,5 +23,37 @@
   	<sql>
   		<location>sql</location>  		
   	</sql>
-  </services>
+  </services>  
+  <database>
+  	<default>
+  	    <!-- 
+  		<jndiDataSourceProvider>
+  			<jndiName></jndiName>
+  		</jndiDataSourceProvider>
+  		-->
+  		<pooledDataSourceProvider>
+			<driverClassName></driverClassName>
+			<url></url>
+			<username></username>
+			<password></password>
+  			<connectionProperties>
+  				<initialSize>1</initialSize>
+  				<maxActive>8</maxActive>
+	  			<maxIdle>8</maxIdle>
+	  			<maxWait>-1</maxWait>
+	  			<minIdle>0</minIdle>
+	  			<testOnBorrow>true</testOnBorrow>
+	  			<testOnReturn>false</testOnReturn>
+	  			<testWhileIdle>false</testWhileIdle>
+	  			<validationQuery>select 1 from dual</validationQuery>
+	  			<!-- 
+	  			<timeBetweenEvictionRunsMillis></timeBetweenEvictionRunsMillis>
+	  			<minEvictableIdleTimeMillis></minEvictableIdleTimeMillis>
+	  			<numTestsPerEvictionRun></numTestsPerEvictionRun>  
+	  			<defaultAutoCommit>false</defaultAutoCommit>	
+	  			-->
+  			</connectionProperties>
+  		</pooledDataSourceProvider>
+  	</default>
+  </database>  
 </startup-config>
