@@ -24,13 +24,16 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import architecture.ee.jdbc.sqlquery.factory.Configuration;
 import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
 import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
+import architecture.ee.spring.jdbc.ExtendedJdbcDaoSupport;
 import architecture.ee.spring.jdbc.ExtendedJdbcTemplate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,14 +44,22 @@ public class SqlQueryTest {
 	private static Logger log = LoggerFactory.getLogger(SqlQueryXmlTest.class);
 	
 	@Autowired
+	@Qualifier("sqlQueryFactory")
     private SqlQueryFactory sqlQueryFactory;
 	
+	
 	@Autowired
+	@Qualifier("sqlConfiguration")
+    private Configuration sqlConfiguration;
+	
+	@Autowired
+	@Qualifier("dataSource")
     private DataSource dataSource;
 	
 	@Test
 	public void testJdbcTemplate1(){		
-		ExtendedJdbcTemplate template = new ExtendedJdbcTemplate(dataSource);
+		
+		ExtendedJdbcTemplate template = new ExtendedJdbcTemplate(dataSource);		
 		MappedStatement ms = sqlQueryFactory.getConfiguration().getMappedStatement("COMMON.SELECT_TABLE_NAMES");		
 		List<String> list = template.queryForList(ms.getBoundSql(null).getSql(), String.class);
 		log.debug( list.size() + " >>>>>>>>>> " + list ) ;
@@ -71,6 +82,18 @@ public class SqlQueryTest {
 	public void testJdbcTemplate3(){				
 		ExtendedJdbcTemplate template = new ExtendedJdbcTemplate(dataSource);
 		log.debug( template.getDBInfo().toString() ) ;
+	}
+	
+	
+	@Test
+	public void testJdbcDao(){			
+		log.debug( ">>>>>>>>>> testJdbcDao" ) ;
+		ExtendedJdbcDaoSupport template = new ExtendedJdbcDaoSupport(sqlConfiguration);
+		template.setDataSource(dataSource);
+		log.debug( "RESULT: {}",
+				template.getExtendedJdbcTemplate().queryForList(template.getBoundSql("COMMON.SELECT_TABLE_NAMES").getSql() )
+		);
+		
 	}
 	
 }

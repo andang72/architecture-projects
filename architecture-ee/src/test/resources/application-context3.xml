@@ -24,11 +24,13 @@
           
      <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" ></beans:bean>
      
- 	<beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
+ 	 <beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
      	<beans:property name="resourceLocations">
      		<beans:list/>
      	</beans:property>
      </beans:bean>
+     
+     <bean id="sqlConfiguration" factory-bean="sqlQueryFactory" factory-method="getConfiguration" />
      
      <beans:bean id="sqlQueryDirectoryScanner" class="architecture.ee.jdbc.sqlquery.scanner.DirectoryScanner" p:sqlQueryFactory-ref="sqlQueryFactory" depends-on="sqlQueryFactory" init-method="initialize" destroy-method="destroy">
      	<beans:property name="directory" value="${services.sql.location}"></beans:property>
