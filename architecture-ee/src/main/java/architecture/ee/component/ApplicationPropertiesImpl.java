@@ -134,7 +134,4 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 		return "ApplicationPropertiesImpl [properties=" + properties + "]";
 	}
 
-
-	
-	
 }
