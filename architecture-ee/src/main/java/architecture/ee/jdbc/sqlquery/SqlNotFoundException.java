@@ -26,7 +26,6 @@ public class SqlNotFoundException extends SqlQueryException {
 
 	public SqlNotFoundException(String msg, Throwable cause) {
 		super(msg, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	public SqlNotFoundException(String msg) {
