@@ -150,11 +150,19 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						// view end
 						
 						// security start
+						
 						org.dom4j.Element securityNode = root.addElement("security");
+						org.dom4j.Element encrpptNode = securityNode.addElement("encrypt");
+						encrpptNode.addElement("algorithm").setText("Blowfish");;
+						encrpptNode.addElement("key").addElement("current");
+						org.dom4j.Element encrpptPropertyNode = encrpptNode.addElement("property");
+						encrpptPropertyNode.addElement("name").setText("username");
+						encrpptPropertyNode.addElement("name").setText("password");						
 						securityNode.addElement("authentication").addElement("encoding").addElement("algorithm").setText("SHA-256");
+
 						// security end
-	
 						// scripting start
+	
 						/**
 						org.dom4j.Element scriptingNode = root.addElement("scripting");
 						org.dom4j.Element groovyNode = scriptingNode.addElement("groovy");
@@ -166,7 +174,9 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						*/
 						// scripting end
 						// database start
-						//org.dom4j.Element databaseNode = root.addElement("database");
+						
+						org.dom4j.Element databaseNode = root.addElement("database").addElement("default");
+						
 						// database end
 						xmlWriter.write(document);
 					    } catch (Exception e) {
