@@ -71,52 +71,23 @@ public class XmlStatementBuilder extends AbstractBuilder {
 
 	}
 
-	public void parseStatementNode() {
-		String idToUse = context.getStringAttribute(XML_ATTR_ID_TAG);
-		String nameToUse = context.getStringAttribute(XML_ATTR_NAME_TAG);
-		if (StringUtils.isEmpty(idToUse))
-			idToUse = nameToUse;
-		String descriptionToUse = context.getStringAttribute(XML_ATTR_DESCRIPTION_TAG);
-		Integer fetchSize = context.getIntAttribute(XML_ATTR_FETCH_SIZE_TAG, 0);
-		Integer timeout = context.getIntAttribute(XML_ATTR_TIMEOUT_TAG, 0);
-
-		// bug!! 디폴트로 PREPARED !!!
-		StatementType statementType = StatementType.valueOf(context.getStringAttribute(XML_ATTR_STATEMENT_TYPE_TAG, StatementType.PREPARED.toString()));
-		List<ParameterMapping> parameterMappings = parseParameterMappings(context);
-		List<ResultMapping> resultrMappings = parseResultMappings(context);
-		
-		// dynamic 해당하는 부분을 검색한다.
-		List<SqlNode> contents = parseDynamicTags(context);
-		MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
-		SqlSource sqlSource = new DynamicSqlSource(configuration, rootSqlNode, parameterMappings, resultrMappings);
-		builderAssistant.addMappedStatement(idToUse, descriptionToUse, sqlSource, statementType, fetchSize, timeout);
-	}
-
-	private List<ResultMapping> parseResultMappings(XNode node) {
-		List<ResultMapping> parameterMappings = new ArrayList<ResultMapping>();
-		List<XNode> children = node.evalNodes("result-mappings/result");
-		for (XNode child : children) {
-			ResultMapping.Builder builder = new ResultMapping.Builder(child.getStringAttribute(XML_ATTR_NAME_TAG));
-			builder.index(child.getIntAttribute("index", 0));
-			builder.primary(child.getBooleanAttribute("primary", false));
-			builder.encoding(child.getStringAttribute("encoding", null));
-			builder.pattern(child.getStringAttribute("pattern", null));
-			builder.cipher(child.getStringAttribute("cipher", null));
-			builder.cipherKey(child.getStringAttribute("cipherKey", null));
-			builder.cipherKeyAlg(child.getStringAttribute("cipherKeyAlg", null));
-			builder.size(child.getStringAttribute("size", "0"));
-			
-			String jdbcTypeName = child.getStringAttribute("jdbcType", null);
-			if (jdbcTypeName != null)
-				builder.jdbcTypeName(jdbcTypeName);
-			
-			String javaTypeName = child.getStringAttribute("javaType", null);
-			log.debug( javaTypeName );
-			if (javaTypeName != null)
-				builder.javaType(getTypeAliasRegistry().resolveAlias(javaTypeName));
-			parameterMappings.add(builder.build());
+	private List<SqlNode> parseDynamicTags(XNode node) {
+		List<SqlNode> contents = new ArrayList<SqlNode>();		
+		NodeList children = node.getNode().getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			XNode child = node.newXNode(children.item(i));
+			String nodeName = child.getNode().getNodeName();
+			if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
+				String data = child.getStringBody("");
+				contents.add(new TextSqlNode(data));
+			} else {
+				if (XML_ATTR_DYNAMIC_TAG.equals(nodeName)) {
+					String data = child.getStringBody("");
+					contents.add(new DynamicSqlNode(data));
+				}
+			}
 		}
-		return parameterMappings;
+		return contents;
 	}
 
 	private List<ParameterMapping> parseParameterMappings(XNode node) {
@@ -173,23 +144,52 @@ public class XmlStatementBuilder extends AbstractBuilder {
 		 */
 		return parameterMappings;
 	}
-	
-	private List<SqlNode> parseDynamicTags(XNode node) {
-		List<SqlNode> contents = new ArrayList<SqlNode>();		
-		NodeList children = node.getNode().getChildNodes();
-		for (int i = 0; i < children.getLength(); i++) {
-			XNode child = node.newXNode(children.item(i));
-			String nodeName = child.getNode().getNodeName();
-			if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
-				String data = child.getStringBody("");
-				contents.add(new TextSqlNode(data));
-			} else {
-				if (XML_ATTR_DYNAMIC_TAG.equals(nodeName)) {
-					String data = child.getStringBody("");
-					contents.add(new DynamicSqlNode(data));
-				}
-			}
+
+	private List<ResultMapping> parseResultMappings(XNode node) {
+		List<ResultMapping> parameterMappings = new ArrayList<ResultMapping>();
+		List<XNode> children = node.evalNodes("result-mappings/result");
+		for (XNode child : children) {
+			ResultMapping.Builder builder = new ResultMapping.Builder(child.getStringAttribute(XML_ATTR_NAME_TAG));
+			builder.index(child.getIntAttribute("index", 0));
+			builder.primary(child.getBooleanAttribute("primary", false));
+			builder.encoding(child.getStringAttribute("encoding", null));
+			builder.pattern(child.getStringAttribute("pattern", null));
+			builder.cipher(child.getStringAttribute("cipher", null));
+			builder.cipherKey(child.getStringAttribute("cipherKey", null));
+			builder.cipherKeyAlg(child.getStringAttribute("cipherKeyAlg", null));
+			builder.size(child.getStringAttribute("size", "0"));
+			
+			String jdbcTypeName = child.getStringAttribute("jdbcType", null);
+			if (jdbcTypeName != null)
+				builder.jdbcTypeName(jdbcTypeName);
+			
+			String javaTypeName = child.getStringAttribute("javaType", null);
+			log.debug( javaTypeName );
+			if (javaTypeName != null)
+				builder.javaType(getTypeAliasRegistry().resolveAlias(javaTypeName));
+			parameterMappings.add(builder.build());
 		}
-		return contents;
+		return parameterMappings;
+	}
+	
+	public void parseStatementNode() {
+		String idToUse = context.getStringAttribute(XML_ATTR_ID_TAG);
+		String nameToUse = context.getStringAttribute(XML_ATTR_NAME_TAG);
+		if (StringUtils.isEmpty(idToUse))
+			idToUse = nameToUse;
+		String descriptionToUse = context.getStringAttribute(XML_ATTR_DESCRIPTION_TAG);
+		Integer fetchSize = context.getIntAttribute(XML_ATTR_FETCH_SIZE_TAG, 0);
+		Integer timeout = context.getIntAttribute(XML_ATTR_TIMEOUT_TAG, 0);
+
+		// bug!! 디폴트로 PREPARED !!!
+		StatementType statementType = StatementType.valueOf(context.getStringAttribute(XML_ATTR_STATEMENT_TYPE_TAG, StatementType.PREPARED.toString()));
+		List<ParameterMapping> parameterMappings = parseParameterMappings(context);
+		List<ResultMapping> resultrMappings = parseResultMappings(context);
+		
+		// dynamic 해당하는 부분을 검색한다.
+		List<SqlNode> contents = parseDynamicTags(context);
+		MixedSqlNode rootSqlNode = new MixedSqlNode(contents);
+		SqlSource sqlSource = new DynamicSqlSource(configuration, rootSqlNode, parameterMappings, resultrMappings);
+		builderAssistant.addMappedStatement(idToUse, descriptionToUse, sqlSource, statementType, fetchSize, timeout);
 	}
 }

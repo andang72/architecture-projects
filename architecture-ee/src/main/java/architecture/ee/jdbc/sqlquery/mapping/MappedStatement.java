@@ -23,6 +23,55 @@ import architecture.ee.jdbc.sqlquery.factory.Configuration;
 
 public class MappedStatement {
 
+	public static class Builder {
+
+		private MappedStatement mappedStatement = new MappedStatement();
+
+		public Builder(Configuration configuration, String id, SqlSource sqlSource, StatementType statementType) {
+			mappedStatement.configuration = configuration;
+			mappedStatement.id = id;
+			mappedStatement.sqlSource = sqlSource;
+			mappedStatement.statementType = StatementType.PREPARED;
+			mappedStatement.timeout = configuration.getDefaultStatementTimeout();
+		}
+
+		public MappedStatement build() {
+			assert mappedStatement.configuration != null;
+			assert mappedStatement.id != null;
+			assert mappedStatement.sqlSource != null;
+			return mappedStatement;
+		}
+
+		public Builder description(String description) {
+			mappedStatement.description = description;
+			return this;
+		}
+
+		public Builder fetchSize(Integer fetchSize) {
+			mappedStatement.fetchSize = fetchSize;
+			return this;
+		}
+
+		public String id() {
+			return mappedStatement.id;
+		}
+
+		public Builder resource(String resource) {
+			mappedStatement.resource = resource;
+			return this;
+		}
+
+		public Builder statementType(StatementType statementType) {
+			mappedStatement.statementType = statementType;
+			return this;
+		}
+
+		public Builder timeout(Integer timeout) {
+			mappedStatement.timeout = timeout;
+			return this;
+		}
+	}
+
 	private String resource;
 
 	private Configuration configuration;
@@ -42,87 +91,6 @@ public class MappedStatement {
 	public MappedStatement() {
 	}
 
-	public static class Builder {
-
-		private MappedStatement mappedStatement = new MappedStatement();
-
-		public Builder(Configuration configuration, String id, SqlSource sqlSource, StatementType statementType) {
-			mappedStatement.configuration = configuration;
-			mappedStatement.id = id;
-			mappedStatement.sqlSource = sqlSource;
-			mappedStatement.statementType = StatementType.PREPARED;
-			mappedStatement.timeout = configuration.getDefaultStatementTimeout();
-		}
-
-		public Builder resource(String resource) {
-			mappedStatement.resource = resource;
-			return this;
-		}
-
-		public String id() {
-			return mappedStatement.id;
-		}
-
-		public Builder description(String description) {
-			mappedStatement.description = description;
-			return this;
-		}
-
-		public Builder fetchSize(Integer fetchSize) {
-			mappedStatement.fetchSize = fetchSize;
-			return this;
-		}
-
-		public Builder timeout(Integer timeout) {
-			mappedStatement.timeout = timeout;
-			return this;
-		}
-
-		public Builder statementType(StatementType statementType) {
-			mappedStatement.statementType = statementType;
-			return this;
-		}
-
-		public MappedStatement build() {
-			assert mappedStatement.configuration != null;
-			assert mappedStatement.id != null;
-			assert mappedStatement.sqlSource != null;
-			return mappedStatement;
-		}
-	}
-
-	public String getId() {
-		return this.id;
-	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
-	public String getResource() {
-		return resource;
-	}
-
-	public Configuration getConfiguration() {
-		return configuration;
-	}
-
-	public Integer getFetchSize() {
-		return fetchSize;
-	}
-
-	public Integer getTimeout() {
-		return timeout;
-	}
-
-	public SqlSource getSqlSource() {
-		return sqlSource;
-	}
-
-	public StatementType getStatementType() {
-		return statementType;
-	}
-
 	public BoundSql getBoundSql(Object parameterObject) {
 		BoundSql boundSql = sqlSource.getBoundSql(parameterObject);		
 		return boundSql;
@@ -138,5 +106,37 @@ public class MappedStatement {
 			return sqlSource.getBoundSql(parameterObject, params);
 		}
 		
+	}
+
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public Integer getFetchSize() {
+		return fetchSize;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public String getResource() {
+		return resource;
+	}
+
+	public SqlSource getSqlSource() {
+		return sqlSource;
+	}
+
+	public StatementType getStatementType() {
+		return statementType;
+	}
+
+	public Integer getTimeout() {
+		return timeout;
 	}
 }

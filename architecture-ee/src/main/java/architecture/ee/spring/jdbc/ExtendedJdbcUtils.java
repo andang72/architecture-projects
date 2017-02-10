@@ -26,8 +26,6 @@ import org.springframework.jdbc.support.JdbcUtils;
 
 public class ExtendedJdbcUtils extends JdbcUtils {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ExtendedJdbcUtils.class);
-	
 	public enum DB {		
 		ORACLE, 
 		POSTGRESQL, 
@@ -41,6 +39,8 @@ public class ExtendedJdbcUtils extends JdbcUtils {
 		 
 		 
 	}
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExtendedJdbcUtils.class);
 
 	public static DB extractDB(Connection con ){
 		DB db = DB.UNKNOWN;

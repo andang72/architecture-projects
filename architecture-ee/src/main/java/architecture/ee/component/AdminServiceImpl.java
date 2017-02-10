@@ -31,16 +31,16 @@ public class AdminServiceImpl implements AdminService {
 	@Autowired( required = true )
 	private EventBus eventBus;
 
+	public void fireStateChangeEvent(Object soruce, State oldState, State newState) {
+		eventBus.post(new StateChangeEvent( soruce, oldState, newState));
+	}
+
 	public Repository getRepository() {
 		return repository;
 	}
 
 	public void publishEvent(Object event) {
 		eventBus.post(event);
-	}
-
-	public void fireStateChangeEvent(Object soruce, State oldState, State newState) {
-		eventBus.post(new StateChangeEvent( soruce, oldState, newState));
 	}
 
 	public void registerEventListener(Object listener) {

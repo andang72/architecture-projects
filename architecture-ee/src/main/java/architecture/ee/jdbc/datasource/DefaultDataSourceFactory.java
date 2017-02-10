@@ -44,15 +44,6 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 	
 	private String profileName ;	
 	
-	public String getProfileName() {
-		return profileName;
-	}
-
-	public void setProfileName(String profileName) {
-		this.profileName = profileName;
-	}
-
-	
 	public DataSource getDataSource() {			
 		
 		String profileTag = "database." + profileName ;		
@@ -103,6 +94,15 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 			}
 		}		
 		return null;
+	}
+
+	public String getProfileName() {
+		return profileName;
+	}
+
+	
+	public void setProfileName(String profileName) {
+		this.profileName = profileName;
 	}
 
 }

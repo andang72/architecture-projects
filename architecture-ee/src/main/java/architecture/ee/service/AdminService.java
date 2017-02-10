@@ -19,11 +19,11 @@ import architecture.ee.component.State;
 
 public interface AdminService {
 	
-	public Repository getRepository();
-		
-	public void publishEvent( Object event );
-	
 	public void fireStateChangeEvent(Object soruce, State oldState, State newState);
+		
+	public Repository getRepository();
+	
+	public void publishEvent( Object event );
 
 	public void registerEventListener(Object listener);
 	

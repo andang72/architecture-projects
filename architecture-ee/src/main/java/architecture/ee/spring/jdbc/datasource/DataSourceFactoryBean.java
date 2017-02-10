@@ -26,6 +26,12 @@ public class DataSourceFactoryBean extends DefaultDataSourceFactory implements F
 	
 	private DataSource dataSource;
 	
+	public void destroy() throws Exception {
+		if( dataSource != null && dataSource instanceof org.apache.commons.dbcp.BasicDataSource){
+			((org.apache.commons.dbcp.BasicDataSource)dataSource).close();
+		}
+	}
+
 	public DataSource getObject() throws Exception {
 		if( dataSource == null )
 			dataSource = getDataSource();		
@@ -38,12 +44,6 @@ public class DataSourceFactoryBean extends DefaultDataSourceFactory implements F
 
 	public boolean isSingleton() {
 		return false;
-	}
-
-	public void destroy() throws Exception {
-		if( dataSource != null && dataSource instanceof org.apache.commons.dbcp.BasicDataSource){
-			((org.apache.commons.dbcp.BasicDataSource)dataSource).close();
-		}
 	}
 
 }

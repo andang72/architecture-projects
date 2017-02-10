@@ -31,9 +31,23 @@ import freemarker.template.TemplateHashModel;
 
 public class DynamicSqlNode implements SqlNode {
 
-	protected Logger log = LoggerFactory.getLogger(getClass());
+	public enum Language {
+		VELOCITY, FREEMARKER
+	}
 	private static BeansWrapper wrapper = new BeansWrapper();
+	protected static void populateStatics(Map<String, Object> model) {
+		try {
+			TemplateHashModel enumModels = wrapper.getEnumModels();
+			model.put("enums", enumModels);
+		} catch (UnsupportedOperationException e) {
+		}
+		//TemplateHashModel staticModels = wrapper.getStaticModels();
+		model.put("statics", BeansWrapper.getDefaultInstance().getStaticModels());
+	}
+	protected Logger log = LoggerFactory.getLogger(getClass());
+
 	private String text;
+
 	private Language language = Language.FREEMARKER;
 
 	public DynamicSqlNode(String text) {
@@ -76,16 +90,6 @@ public class DynamicSqlNode implements SqlNode {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-
-		return "dynamic[" + text + "]";
-	}
-
-	public enum Language {
-		VELOCITY, FREEMARKER
-	}
-
 	protected String processTemplate(Map<String, Object> model) {
 		StringReader reader = new StringReader(text);
 		StringWriter writer = new StringWriter();
@@ -105,13 +109,9 @@ public class DynamicSqlNode implements SqlNode {
 		return writer.toString();
 	}
 
-	protected static void populateStatics(Map<String, Object> model) {
-		try {
-			TemplateHashModel enumModels = wrapper.getEnumModels();
-			model.put("enums", enumModels);
-		} catch (UnsupportedOperationException e) {
-		}
-		//TemplateHashModel staticModels = wrapper.getStaticModels();
-		model.put("statics", BeansWrapper.getDefaultInstance().getStaticModels());
+	@Override
+	public String toString() {
+
+		return "dynamic[" + text + "]";
 	}
 }

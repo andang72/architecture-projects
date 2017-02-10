@@ -55,31 +55,6 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 	private ApplicationProperties setupProperties = null;
 	
 	
-	public void initialize(){
-		if(initailized.get()) {			
-			log.debug("initialized");
-		}
-	}
-	
-	public void setServletContext(ServletContext servletContext) {
-		if (!initailized.get()) {
-			ServletContextResource resource = new ServletContextResource(servletContext, "/WEB-INF");
-			try {
-				File file = resource.getFile();
-				log.debug("repository exists : " + file.exists());
-				if( !file.exists() )		
-				{
-					
-				}
-				rootResource = new FileSystemResource(file);
-				log.debug("repository initialize with : " + rootResource.toString());
-				initailized.set(true);
-			} catch (IOException e) {
-				log.error("faile to .. ", e);
-			}			
-		}
-	}
-
 	public ConfigRoot getConfigRoot() {
 		try {
 			File file = new File( getRootResource().getFile() , "config" );
@@ -92,13 +67,7 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 			return null;
 		}
 	}
-
-	private Resource getRootResource() {
-		if (initailized.get())
-			return rootResource;
-		return null;
-	}
-
+	
 	public File getFile(String name) {
 		try {			
 			File file = new File( getRootResource().getFile() , name );
@@ -107,7 +76,13 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 		}
 		return null;
 	}
-	
+
+	private Resource getRootResource() {
+		if (initailized.get())
+			return rootResource;
+		return null;
+	}
+
 	public ApplicationProperties getSetupApplicationProperties() {
 		if (setupProperties == null) {
 			if(initailized.get()){
@@ -201,6 +176,31 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 			}
 		}
 		return setupProperties ;
+	}
+
+	public void initialize(){
+		if(initailized.get()) {			
+			log.debug("initialized");
+		}
+	}
+	
+	public void setServletContext(ServletContext servletContext) {
+		if (!initailized.get()) {
+			ServletContextResource resource = new ServletContextResource(servletContext, "/WEB-INF");
+			try {
+				File file = resource.getFile();
+				log.debug("repository exists : " + file.exists());
+				if( !file.exists() )		
+				{
+					
+				}
+				rootResource = new FileSystemResource(file);
+				log.debug("repository initialize with : " + rootResource.toString());
+				initailized.set(true);
+			} catch (IOException e) {
+				log.error("faile to .. ", e);
+			}			
+		}
 	}
 
 }

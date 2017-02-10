@@ -32,20 +32,12 @@ public class EmptyApplicationProperties implements ApplicationProperties {
 		}
 	}
 
-	private EmptyApplicationProperties() {
-		
-	}
-
 	public static EmptyApplicationProperties getInstance() {
 		return InstanceHolder.instance;
 	}
 
-	public Collection<String> getChildrenNames(String name) {
-		return Collections.emptyList();
-	}
-
-	public Collection<String> getPropertyNames() {
-		return Collections.emptyList();
+	private EmptyApplicationProperties() {
+		
 	}
 
 	public void clear() {
@@ -67,8 +59,36 @@ public class EmptyApplicationProperties implements ApplicationProperties {
 		return null;
 	}
 
-	public Collection<String> values() {
+	public boolean getBooleanProperty(String name) {
+		return false;
+	}
+
+	public boolean getBooleanProperty(String name, boolean defaultValue) {
+		return false;
+	}
+
+	public Collection<String> getChildrenNames(String name) {
 		return Collections.emptyList();
+	}
+
+	public int getIntProperty(String name, int defaultValue) {
+		return 0;
+	}
+
+	public long getLongProperty(String name, long defaultValue) {
+		return 0;
+	}
+
+	public Collection<String> getPropertyNames() {
+		return Collections.emptyList();
+	}
+
+	public String getStringProperty(String name, String defaultValue) {
+		return defaultValue;
+	}
+
+	public boolean isEmpty() {
+		return true;
 	}
 
 	public Set<String> keySet() {
@@ -90,28 +110,8 @@ public class EmptyApplicationProperties implements ApplicationProperties {
 		return 0;
 	}
 
-	public boolean isEmpty() {
-		return true;
-	}
-
-	public String getStringProperty(String name, String defaultValue) {
-		return defaultValue;
-	}
-
-	public boolean getBooleanProperty(String name) {
-		return false;
-	}
-
-	public boolean getBooleanProperty(String name, boolean defaultValue) {
-		return false;
-	}
-
-	public int getIntProperty(String name, int defaultValue) {
-		return 0;
-	}
-
-	public long getLongProperty(String name, long defaultValue) {
-		return 0;
+	public Collection<String> values() {
+		return Collections.emptyList();
 	}
 
 }

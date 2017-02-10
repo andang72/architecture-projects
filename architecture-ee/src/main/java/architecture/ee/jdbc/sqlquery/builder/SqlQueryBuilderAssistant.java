@@ -37,21 +37,6 @@ public class SqlQueryBuilderAssistant extends AbstractBuilder {
 		this.resource = resource;
 	}
 
-	public String getCurrentNamespace() {
-		return currentNamespace;
-	}
-
-	public void setCurrentNamespace(String currentNamespace) {
-		if (currentNamespace == null) {
-			throw new BuilderException("The mapper element requires a namespace attribute to be specified.");
-		}
-		if (this.currentNamespace != null && !this.currentNamespace.equals(currentNamespace)) {
-			throw new BuilderException(
-					"Wrong namespace. Expected '" + this.currentNamespace + "' but found '" + currentNamespace + "'.");
-		}
-		this.currentNamespace = currentNamespace;
-	}
-
 	public MappedStatement addMappedStatement(String id, String description, SqlSource sqlSource, StatementType statementType, Integer fetchSize, Integer timeout) {
 		String idToUse = applyCurrentNamespace(id);		
 		MappedStatement.Builder statementBuilder = new MappedStatement.Builder(configuration, idToUse, sqlSource, statementType);
@@ -74,6 +59,21 @@ public class SqlQueryBuilderAssistant extends AbstractBuilder {
 		if (base.contains("."))
 			return base;
 		return currentNamespace + "." + base;
+	}
+
+	public String getCurrentNamespace() {
+		return currentNamespace;
+	}
+
+	public void setCurrentNamespace(String currentNamespace) {
+		if (currentNamespace == null) {
+			throw new BuilderException("The mapper element requires a namespace attribute to be specified.");
+		}
+		if (this.currentNamespace != null && !this.currentNamespace.equals(currentNamespace)) {
+			throw new BuilderException(
+					"Wrong namespace. Expected '" + this.currentNamespace + "' but found '" + currentNamespace + "'.");
+		}
+		this.currentNamespace = currentNamespace;
 	}
 
 	private void setStatementTimeout(Integer timeout, MappedStatement.Builder statementBuilder) {

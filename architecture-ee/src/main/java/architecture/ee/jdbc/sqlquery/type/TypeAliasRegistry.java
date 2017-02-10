@@ -98,6 +98,18 @@ public class TypeAliasRegistry {
 		registerAlias("ResultSet", ResultSet.class);
 	}
 
+	public void registerAlias(String alias, Class<?> value) {
+		assert alias != null;
+		String key = alias.toLowerCase();
+		if (TYPE_ALIASES.containsKey(key) && !TYPE_ALIASES.get(key).equals(value.getName())
+				&& TYPE_ALIASES.get(alias) != null) {
+			if (!value.equals(TYPE_ALIASES.get(alias))) {
+				//throw new ConfigurationError(L10NUtils.format("002002", alias, TYPE_ALIASES.get(alias).getName()));
+			}
+		}
+		TYPE_ALIASES.put(key, value);
+	}
+
 	@SuppressWarnings("unchecked")
 	// throws class cast exception as well if types cannot be assigned
 	public <T> Class<T> resolveAlias(String className) {
@@ -115,17 +127,5 @@ public class TypeAliasRegistry {
 		} catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException( className + " not found", e);
 		}
-	}
-
-	public void registerAlias(String alias, Class<?> value) {
-		assert alias != null;
-		String key = alias.toLowerCase();
-		if (TYPE_ALIASES.containsKey(key) && !TYPE_ALIASES.get(key).equals(value.getName())
-				&& TYPE_ALIASES.get(alias) != null) {
-			if (!value.equals(TYPE_ALIASES.get(alias))) {
-				//throw new ConfigurationError(L10NUtils.format("002002", alias, TYPE_ALIASES.get(alias).getName()));
-			}
-		}
-		TYPE_ALIASES.put(key, value);
 	}
 }

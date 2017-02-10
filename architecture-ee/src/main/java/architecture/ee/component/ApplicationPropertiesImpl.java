@@ -63,20 +63,8 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 		properties = new XmlProperties(fileName);
 	}
 
-	public Collection<String> getChildrenNames(String name) {
-		return properties.getChildrenNames(name);
-	}
-
-	public Collection<String> getPropertyNames() {
-		return properties.getPropertyNames();
-	}
-
-	public int size() {
+	public void clear() {
 		throw new UnsupportedOperationException();
-	}
-
-	public boolean isEmpty() {
-		return false;
 	}
 
 	public boolean containsKey(Object key) {
@@ -87,38 +75,12 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 		throw new UnsupportedOperationException();
 	}
 
-	public String get(Object key) {
-		return properties.getProperty((String) key);
-	}
-
-	public String put(String key, String value) {
-		properties.setProperty(key, value);
-		return "";
-	}
-
-	public String remove(Object key) {
-		properties.deleteProperty((String) key);
-		return "";
-	}
-
-	public void putAll(Map<? extends String, ? extends String> propertyMap) {
-		properties.setProperties((Map<String, String>) propertyMap);
-	}
-
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Set<String> keySet() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Collection<String> values() {
-		throw new UnsupportedOperationException();
-	}
-
 	public Set<java.util.Map.Entry<String, String>> entrySet() {
 		throw new UnsupportedOperationException();
+	}
+
+	public String get(Object key) {
+		return properties.getProperty((String) key);
 	}
 
 	public boolean getBooleanProperty(String name) {
@@ -133,6 +95,10 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 			return defaultValue;
 	}
 
+	public Collection<String> getChildrenNames(String name) {
+		return properties.getChildrenNames(name);
+	}
+
 	public int getIntProperty(String name, int defaultValue) {
 		return NumberUtils.toInt(get(name), defaultValue);
 	}
@@ -141,13 +107,47 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 		return NumberUtils.toLong(get(name), defaultValue);
 	}
 
+	public Collection<String> getPropertyNames() {
+		return properties.getPropertyNames();
+	}
+
 	public String getStringProperty(String name, String defaultValue) {
 		return StringUtils.defaultString(get(name), defaultValue);
+	}
+
+	public boolean isEmpty() {
+		return false;
+	}
+
+	public Set<String> keySet() {
+		throw new UnsupportedOperationException();
+	}
+
+	public String put(String key, String value) {
+		properties.setProperty(key, value);
+		return "";
+	}
+
+	public void putAll(Map<? extends String, ? extends String> propertyMap) {
+		properties.setProperties((Map<String, String>) propertyMap);
+	}
+
+	public String remove(Object key) {
+		properties.deleteProperty((String) key);
+		return "";
+	}
+
+	public int size() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String toString() {
 		return "ApplicationPropertiesImpl [properties=" + properties + "]";
+	}
+
+	public Collection<String> values() {
+		throw new UnsupportedOperationException();
 	}
 
 }

@@ -39,6 +39,60 @@ import architecture.ee.util.StringUtils;
 
 public class DirectoryScanner {
 	
+	protected static class DirectoryListener implements FileAlterationListener {
+
+		private SqlQueryFactory sqlQueryFactory;
+		
+		
+		public DirectoryListener(SqlQueryFactory sqlQueryFactory) {
+			this.sqlQueryFactory = sqlQueryFactory;
+		}
+
+		protected void buildFromFile(File file) throws BuilderException {
+			try {
+				XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(file), sqlQueryFactory.getConfiguration(), file.toURI().toString(), null);
+				builder.parse();
+			} catch (IOException e) {
+				throw new BuilderException("build faild", e);
+			}
+		}
+
+		public void onDirectoryChange(File directory) {			
+		}
+
+		public void onDirectoryCreate(File directory) {		
+		}
+
+		public void onDirectoryDelete(File directory) {
+		}
+
+		public void onFileChange(File file) {
+			log.debug("change {}", file.toURI().toString());
+			buildFromFile(file);
+		}
+
+		public void onFileCreate(File file) {
+			log.debug("new {}", file.toURI().toString());
+			buildFromFile(file);
+		}
+
+		public void onFileDelete(File file) {	
+			log.debug("remove {}", file.toURI().toString());
+			if (sqlQueryFactory.getConfiguration().isResourceLoaded(file.toURI().toString())) {
+				sqlQueryFactory.getConfiguration().removeLoadedResource(file.toURI().toString());
+			}
+		}		
+		
+
+		public void onStart(FileAlterationObserver observer) {			
+		}				
+		
+		public void onStop(FileAlterationObserver observer) {	
+			
+		}		
+		
+	}
+	
 	private static Logger log = LoggerFactory.getLogger(DirectoryScanner.class);
 	
 	private static final int DEFAULT_POOL_INTERVAL_MILLIS = 10000;
@@ -47,43 +101,53 @@ public class DirectoryScanner {
 	
 	private SqlQueryFactory sqlQueryFactory;
 	
-	private FileAlterationMonitor monitor;
+	private FileAlterationMonitor monitor; 
 	
-	private ResourceLoader resourceLoader; 
+	private ResourceLoader resourceLoader;
 	
 	@Autowired( required = true)
 	private Repository repository;
-	
-	private String directory;
 
 	
 	
+	private String directory;
+
 	public DirectoryScanner() {
 		this.resourceLoader = new FileSystemResourceLoader();	
 	}
 
-	public int getPollIntervalMillis() {
-		return pollIntervalMillis;
+	protected void buildFromDirectory(File file) throws BuilderException {
+		for( File f : FileUtils.listFiles(file, FileFilterUtils.suffixFileFilter(sqlQueryFactory.getConfiguration().getSuffix()), FileFilterUtils.trueFileFilter())){			
+			if( !sqlQueryFactory.getConfiguration().isResourceLoaded(f.toURI().toString())){
+				log.debug("building " + f.toURI().toString());
+				try {					
+					XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(f), sqlQueryFactory.getConfiguration(), f.toURI().toString(), null);
+					builder.parse();
+				} catch (IOException e) {
+					throw new BuilderException("build faild", e);
+				}	
+			}
+		}
 	}
 
-	public void setPollIntervalMillis(int pollIntervalMillis) {
-		this.pollIntervalMillis = pollIntervalMillis;
-	}
-
-	public SqlQueryFactory getSqlQueryFactory() {
-		return sqlQueryFactory;
-	}
-
-	public void setSqlQueryFactory(SqlQueryFactory sqlQueryFactory) {
-		this.sqlQueryFactory = sqlQueryFactory;
+	public void destroy() throws Exception {	
+		log.debug("stop sqlquery directory scanner...");
+		if( monitor != null)
+		{
+			monitor.stop();
+		}
 	}
 
 	public String getDirectory() {
 		return directory;
 	}
 
-	public void setDirectory(String directory) {
-		this.directory = directory;
+	public int getPollIntervalMillis() {
+		return pollIntervalMillis;
+	}
+
+	public SqlQueryFactory getSqlQueryFactory() {
+		return sqlQueryFactory;
 	}
 
 	public void initialize() {				
@@ -132,6 +196,19 @@ public class DirectoryScanner {
 			}			
 	}
 	
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
+
+	
+	public void setPollIntervalMillis(int pollIntervalMillis) {
+		this.pollIntervalMillis = pollIntervalMillis;
+	}
+		
+	public void setSqlQueryFactory(SqlQueryFactory sqlQueryFactory) {
+		this.sqlQueryFactory = sqlQueryFactory;
+	}
+	
 	public void start(File file ) throws Exception {
 		log.debug("start sqlquery directory scanner...");
 		if( monitor == null)
@@ -142,83 +219,6 @@ public class DirectoryScanner {
 			monitor.addObserver(observer);			
 		}
 		monitor.start();
-	}
-
-	
-	public void destroy() throws Exception {	
-		log.debug("stop sqlquery directory scanner...");
-		if( monitor != null)
-		{
-			monitor.stop();
-		}
-	}
-		
-	protected void buildFromDirectory(File file) throws BuilderException {
-		for( File f : FileUtils.listFiles(file, FileFilterUtils.suffixFileFilter(sqlQueryFactory.getConfiguration().getSuffix()), FileFilterUtils.trueFileFilter())){			
-			if( !sqlQueryFactory.getConfiguration().isResourceLoaded(f.toURI().toString())){
-				log.debug("building " + f.toURI().toString());
-				try {					
-					XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(f), sqlQueryFactory.getConfiguration(), f.toURI().toString(), null);
-					builder.parse();
-				} catch (IOException e) {
-					throw new BuilderException("build faild", e);
-				}	
-			}
-		}
-	}
-	
-	protected static class DirectoryListener implements FileAlterationListener {
-
-		private SqlQueryFactory sqlQueryFactory;
-		
-		
-		public DirectoryListener(SqlQueryFactory sqlQueryFactory) {
-			this.sqlQueryFactory = sqlQueryFactory;
-		}
-
-		public void onStart(FileAlterationObserver observer) {			
-		}
-
-		public void onDirectoryCreate(File directory) {		
-		}
-
-		public void onDirectoryChange(File directory) {			
-		}
-
-		public void onDirectoryDelete(File directory) {
-		}
-
-		public void onFileCreate(File file) {
-			log.debug("new {}", file.toURI().toString());
-			buildFromFile(file);
-		}
-
-		public void onFileChange(File file) {
-			log.debug("change {}", file.toURI().toString());
-			buildFromFile(file);
-		}
-
-		public void onFileDelete(File file) {	
-			log.debug("remove {}", file.toURI().toString());
-			if (sqlQueryFactory.getConfiguration().isResourceLoaded(file.toURI().toString())) {
-				sqlQueryFactory.getConfiguration().removeLoadedResource(file.toURI().toString());
-			}
-		}		
-		
-
-		public void onStop(FileAlterationObserver observer) {	
-			
-		}				
-		
-		protected void buildFromFile(File file) throws BuilderException {
-			try {
-				XmlSqlSetBuilder builder = new XmlSqlSetBuilder(new FileInputStream(file), sqlQueryFactory.getConfiguration(), file.toURI().toString(), null);
-				builder.parse();
-			} catch (IOException e) {
-				throw new BuilderException("build faild", e);
-			}
-		}		
-		
 	}
 	
 }

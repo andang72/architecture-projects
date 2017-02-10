@@ -29,18 +29,14 @@ public class VariableMapImpl implements VariableMap {
 		variables = new HashMap<String, String>();
 	}
 
-	public VariableMapImpl(Properties properties) {
-		variables = new HashMap<String, String>();
-		for (final String name: properties.stringPropertyNames())
-			variables.put(name, properties.getProperty(name));
-	}
-
 	public VariableMapImpl(Map<String, String> variables) {
 		this.variables = variables;
 	}
 
-	public String expand(String expression) {
-		return substitute(expression, variables);
+	public VariableMapImpl(Properties properties) {
+		variables = new HashMap<String, String>();
+		for (final String name: properties.stringPropertyNames())
+			variables.put(name, properties.getProperty(name));
 	}
 
 	void append(StringBuffer stringbuffer, String string, int i, int j) {
@@ -51,6 +47,10 @@ public class VariableMapImpl implements VariableMap {
 		for (int k = i; k < j; k++)
 			stringbuffer.append(string.charAt(k));
 
+	}
+
+	public String expand(String expression) {
+		return substitute(expression, variables);
 	}
 
 	String expand(String string, int start, int end, Map<String, String> map, Map<String, String> map1) throws IllegalArgumentException {

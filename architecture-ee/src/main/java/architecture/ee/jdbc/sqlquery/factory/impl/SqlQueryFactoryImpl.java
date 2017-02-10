@@ -53,37 +53,6 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 
 	
 	
-	public void initialize() {
-		
-		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZING);
-		
-		if (resourceLocations!=null && resourceLocations.size() > 0){
-			buildFromResourceLocations();
-		}
-		
-		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZED);
-		
-	}
-	
-
-	public List<String> getResourceLocations() {
-		return resourceLocations;
-	}
-
-	public void setResourceLocations(List<String> resourceLocations) {
-		this.resourceLocations = resourceLocations;
-	}
-
-	public Configuration getConfiguration() {
-		return configuration;
-	}
-
-	protected void fireStateChangeEvent(Object soruce, State oldState, State newState) {
-		if( eventBus != null)
-			eventBus.post(new StateChangeEvent( soruce, oldState, newState));
-	}
-	
-	
 	protected void buildFromResourceLocations() {
 		DefaultResourceLoader loader = new DefaultResourceLoader();
 		for (String location : resourceLocations) {
@@ -101,6 +70,39 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 		}
 	}
 	
+
+	public SqlQuery createSqlQuery(DataSource dataSource) {
+
+		return null;
+
+	}
+
+	protected void fireStateChangeEvent(Object soruce, State oldState, State newState) {
+		if( eventBus != null)
+			eventBus.post(new StateChangeEvent( soruce, oldState, newState));
+	}
+
+	public Configuration getConfiguration() {
+		return configuration;
+	}
+
+	public List<String> getResourceLocations() {
+		return resourceLocations;
+	}
+	
+	
+	public void initialize() {
+		
+		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZING);
+		
+		if (resourceLocations!=null && resourceLocations.size() > 0){
+			buildFromResourceLocations();
+		}
+		
+		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZED);
+		
+	}
+	
 	protected boolean isResourceLoaded( Resource resource ){
 		try {
 			return configuration.isResourceLoaded( resource.getURI().toString() );
@@ -109,10 +111,8 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 		}		
 	}
 
-	public SqlQuery createSqlQuery(DataSource dataSource) {
-
-		return null;
-
+	public void setResourceLocations(List<String> resourceLocations) {
+		this.resourceLocations = resourceLocations;
 	}
 
 }

@@ -31,16 +31,16 @@ public class ConfigRootImpl implements ConfigRoot {
 		this.rootResource = rootResource;
 	}
 
-	private Resource getRootResource() {
-		return rootResource;
-	}
-
 	public File getFile(String name) {
 		try {
 			return getRootResource().createRelative(name).getFile();
 		} catch (IOException e) {
 		}
 		return null;
+	}
+
+	private Resource getRootResource() {
+		return rootResource;
 	}
 
 	public URI getRootURI() {

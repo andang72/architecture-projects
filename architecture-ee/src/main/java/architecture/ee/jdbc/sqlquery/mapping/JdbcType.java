@@ -36,8 +36,6 @@ public enum JdbcType {
 	NCLOB(2011), 	// JDK6
 	STRUCT(Types.STRUCT);
 
-	public final int TYPE_CODE;
-
 	private static Map<Integer, JdbcType> codeLookup = new HashMap<Integer, JdbcType>();
 
 	static {
@@ -46,12 +44,14 @@ public enum JdbcType {
 		}
 	}
 
-	JdbcType(int code) {
-		this.TYPE_CODE = code;
-	}
-
 	public static JdbcType forCode(int code) {
 		return codeLookup.get(code);
+	}
+
+	public final int TYPE_CODE;
+
+	JdbcType(int code) {
+		this.TYPE_CODE = code;
 	}
 
 }

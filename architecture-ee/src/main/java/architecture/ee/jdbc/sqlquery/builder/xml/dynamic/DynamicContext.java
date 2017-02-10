@@ -43,17 +43,17 @@ public class DynamicContext {
 		this.bindings.put(ADDITIONAL_PARAMETER_OBJECT_KEY, additionalParameters);
 	}
 
-	public Map<String, Object> getBindings() {
-		return bindings;
+	public void appendSql(String sql) {
+		sqlBuilder.append(sql);
+		sqlBuilder.append(" ");
 	}
 
 	public void bind(String name, Object value) {
 		bindings.put(name, value);
 	}
 
-	public void appendSql(String sql) {
-		sqlBuilder.append(sql);
-		sqlBuilder.append(" ");
+	public Map<String, Object> getBindings() {
+		return bindings;
 	}
 
 	public String getSql() {

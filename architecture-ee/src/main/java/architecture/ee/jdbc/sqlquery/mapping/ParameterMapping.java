@@ -16,9 +16,112 @@
 package architecture.ee.jdbc.sqlquery.mapping;
 
 public class ParameterMapping {
+	public static class Builder {
+
+		/**
+		 * @uml.property name="parameterMapping"
+		 * @uml.associationEnd
+		 */
+		private ParameterMapping parameterMapping = new ParameterMapping();
+
+		public Builder(String property) {
+			parameterMapping.property = property;
+		}
+
+		public Builder(String property, Class<?> javaType) {
+			parameterMapping.property = property;
+			parameterMapping.javaType = javaType;
+		}
+
+		public ParameterMapping build() {
+			return parameterMapping;
+		}
+
+		public Builder cipher(String cipher) {
+			parameterMapping.cipher = cipher;
+			return this;
+		}
+
+		public Builder cipherKey(String cipherKey) {
+			parameterMapping.cipherKey = cipherKey;
+			return this;
+		}
+
+		public Builder cipherKeyAlg(String cipherKeyAlg) {
+			parameterMapping.cipherKeyAlg = cipherKeyAlg;
+			return this;
+		}
+
+		public Builder column(String column) {
+			parameterMapping.column = column;
+			return this;
+		}
+
+		public Builder digest(String digest) {
+			parameterMapping.digest = digest;
+			return this;
+		}
+
+		public Builder encoding(String encoding) {
+			parameterMapping.encoding = encoding;
+			return this;
+		}
+
+		public Builder index(int index) {
+			parameterMapping.index = index;
+			return this;
+		}
+
+		public Builder javaType(Class<?> javaType) {
+			parameterMapping.javaType = javaType;
+			return this;
+		}
+
+		public Builder jdbcType(JdbcType jdbcType) {
+			parameterMapping.jdbcType = jdbcType;
+			return this;
+		}
+
+		public Builder jdbcTypeName(String jdbcTypeName) {
+			parameterMapping.jdbcTypeName = jdbcTypeName;
+			parameterMapping.jdbcType = resolveJdbcType(jdbcTypeName);
+			return this;
+		}
+
+		public Builder mode(String mode) {
+			parameterMapping.mode = Mode.valueOf(mode);
+			return this;
+		}
+
+		public Builder pattern(String pattern) {
+			parameterMapping.pattern = pattern;
+			return this;
+		}
+
+		public Builder primary(boolean primary) {
+			parameterMapping.primary = primary;
+			return this;
+		}
+
+		protected JdbcType resolveJdbcType(String alias) {
+			if (alias == null)
+				return null;
+			try {
+				return JdbcType.valueOf(alias.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				return null;
+			}
+		}
+
+		public Builder size(String sizeString) {
+			parameterMapping.size = Integer.parseInt(sizeString);
+			return this;
+		}
+	};
+
 	public enum Mode {
 		IN, OUT, NONE
-	};
+	}
 
 	private String cipher;
 
@@ -54,120 +157,120 @@ public class ParameterMapping {
 		return cipher;
 	}
 
-	public void setCipher(String cipher) {
-		this.cipher = cipher;
-	}
-
 	public String getCipherKey() {
 		return cipherKey;
-	}
-
-	public void setCipherKey(String cipherKey) {
-		this.cipherKey = cipherKey;
 	}
 
 	public String getCipherKeyAlg() {
 		return cipherKeyAlg;
 	}
 
-	public void setCipherKeyAlg(String cipherKeyAlg) {
-		this.cipherKeyAlg = cipherKeyAlg;
-	}
-
-	public int getSize() {
-		return size;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
-	}
-
-	public int getIndex() {
-		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
-	}
-
-	public String getProperty() {
-		return property;
-	}
-
-	public void setProperty(String property) {
-		this.property = property;
-	}
-
 	public String getColumn() {
 		return column;
-	}
-
-	public void setColumn(String column) {
-		this.column = column;
-	}
-
-	public String getEncoding() {
-		return encoding;
-	}
-
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
-
-	public JdbcType getJdbcType() {
-		return jdbcType;
-	}
-
-	public void setJdbcType(JdbcType jdbcType) {
-		this.jdbcType = jdbcType;
-	}
-
-	public String getJdbcTypeName() {
-		return jdbcTypeName;
-	}
-
-	public void setJdbcTypeName(String jdbcTypeName) {
-		this.jdbcTypeName = jdbcTypeName;
-	}
-
-	public String getPattern() {
-		return pattern;
-	}
-
-	public void setPattern(String pattern) {
-		this.pattern = pattern;
 	}
 
 	public String getDigest() {
 		return digest;
 	}
 
-	public void setDigest(String digest) {
-		this.digest = digest;
+	public String getEncoding() {
+		return encoding;
 	}
 
-	public boolean isPrimary() {
-		return primary;
-	}
-
-	public void setPrimary(boolean primary) {
-		this.primary = primary;
+	public int getIndex() {
+		return index;
 	}
 
 	public Class<?> getJavaType() {
 		return javaType;
 	}
 
-	public void setJavaType(Class<?> javaType) {
-		this.javaType = javaType;
+	public JdbcType getJdbcType() {
+		return jdbcType;
+	}
+
+	public String getJdbcTypeName() {
+		return jdbcTypeName;
 	}
 
 	public Mode getMode() {
 		return mode;
 	}
 
+	public String getPattern() {
+		return pattern;
+	}
+
+	public String getProperty() {
+		return property;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public boolean isPrimary() {
+		return primary;
+	}
+
+	public void setCipher(String cipher) {
+		this.cipher = cipher;
+	}
+
+	public void setCipherKey(String cipherKey) {
+		this.cipherKey = cipherKey;
+	}
+
+	public void setCipherKeyAlg(String cipherKeyAlg) {
+		this.cipherKeyAlg = cipherKeyAlg;
+	}
+
+	public void setColumn(String column) {
+		this.column = column;
+	}
+
+	public void setDigest(String digest) {
+		this.digest = digest;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	public void setJavaType(Class<?> javaType) {
+		this.javaType = javaType;
+	}
+
+	public void setJdbcType(JdbcType jdbcType) {
+		this.jdbcType = jdbcType;
+	}
+
+	public void setJdbcTypeName(String jdbcTypeName) {
+		this.jdbcTypeName = jdbcTypeName;
+	}
+
 	public void setMode(Mode mode) {
 		this.mode = mode;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
+	}
+
+	public void setProperty(String property) {
+		this.property = property;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
 	}
 
 	@Override
@@ -177,109 +280,6 @@ public class ParameterMapping {
 				+ ", encoding=" + encoding + ", jdbcType=" + jdbcType + ", jdbcTypeName=" + jdbcTypeName + ", pattern="
 				+ pattern + ", digest=" + digest + ", primary=" + primary + ", javaType=" + javaType + ", mode=" + mode
 				+ "]";
-	}
-
-	public static class Builder {
-
-		/**
-		 * @uml.property name="parameterMapping"
-		 * @uml.associationEnd
-		 */
-		private ParameterMapping parameterMapping = new ParameterMapping();
-
-		public Builder(String property) {
-			parameterMapping.property = property;
-		}
-
-		public Builder(String property, Class<?> javaType) {
-			parameterMapping.property = property;
-			parameterMapping.javaType = javaType;
-		}
-
-		public Builder javaType(Class<?> javaType) {
-			parameterMapping.javaType = javaType;
-			return this;
-		}
-
-		public Builder jdbcType(JdbcType jdbcType) {
-			parameterMapping.jdbcType = jdbcType;
-			return this;
-		}
-
-		public Builder digest(String digest) {
-			parameterMapping.digest = digest;
-			return this;
-		}
-
-		public Builder cipher(String cipher) {
-			parameterMapping.cipher = cipher;
-			return this;
-		}
-
-		public Builder cipherKey(String cipherKey) {
-			parameterMapping.cipherKey = cipherKey;
-			return this;
-		}
-
-		public Builder cipherKeyAlg(String cipherKeyAlg) {
-			parameterMapping.cipherKeyAlg = cipherKeyAlg;
-			return this;
-		}
-
-		public Builder encoding(String encoding) {
-			parameterMapping.encoding = encoding;
-			return this;
-		}
-
-		public Builder mode(String mode) {
-			parameterMapping.mode = Mode.valueOf(mode);
-			return this;
-		}
-
-		public Builder size(String sizeString) {
-			parameterMapping.size = Integer.parseInt(sizeString);
-			return this;
-		}
-
-		public Builder primary(boolean primary) {
-			parameterMapping.primary = primary;
-			return this;
-		}
-
-		public Builder jdbcTypeName(String jdbcTypeName) {
-			parameterMapping.jdbcTypeName = jdbcTypeName;
-			parameterMapping.jdbcType = resolveJdbcType(jdbcTypeName);
-			return this;
-		}
-
-		public Builder pattern(String pattern) {
-			parameterMapping.pattern = pattern;
-			return this;
-		}
-
-		public Builder index(int index) {
-			parameterMapping.index = index;
-			return this;
-		}
-
-		public Builder column(String column) {
-			parameterMapping.column = column;
-			return this;
-		}
-
-		public ParameterMapping build() {
-			return parameterMapping;
-		}
-
-		protected JdbcType resolveJdbcType(String alias) {
-			if (alias == null)
-				return null;
-			try {
-				return JdbcType.valueOf(alias.toUpperCase());
-			} catch (IllegalArgumentException e) {
-				return null;
-			}
-		}
 	}
 
 }

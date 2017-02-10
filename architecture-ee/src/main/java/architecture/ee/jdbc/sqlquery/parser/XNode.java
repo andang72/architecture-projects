@@ -48,57 +48,6 @@ public class XNode {
 		this.body = parseBody(node);
 	}
 
-	public XNode newXNode(Node node) {
-		return new XNode(xpathParser, node, variables);
-	}
-
-	public XNode getParent() {
-		Node parent = node.getParentNode();
-		if (parent == null || !(parent instanceof Element)) {
-			return null;
-		} else {
-			return new XNode(xpathParser, parent, variables);
-		}
-	}
-
-	public String getPath() {
-		StringBuilder builder = new StringBuilder();
-		Node current = node;
-		while (current != null && current instanceof Element) {
-			if (current != node) {
-				builder.insert(0, "/");
-			}
-			builder.insert(0, current.getNodeName());
-			current = current.getParentNode();
-		}
-		return builder.toString();
-	}
-
-	public String getValueBasedIdentifier() {
-		StringBuilder builder = new StringBuilder();
-		XNode current = this;
-		while (current != null) {
-			if (current != this) {
-				builder.insert(0, "_");
-			}
-			String value = current.getStringAttribute("id",
-					current.getStringAttribute("value", current.getStringAttribute("property", null)));
-			if (value != null) {
-				value = value.replace('.', '_');
-				builder.insert(0, "]");
-				builder.insert(0, value);
-				builder.insert(0, "[");
-			}
-			builder.insert(0, current.getName());
-			current = current.getParent();
-		}
-		return builder.toString();
-	}
-
-	public String evalString(String expression) {
-		return xpathParser.evalString(node, expression);
-	}
-
 	public Boolean evalBoolean(String expression) {
 		return xpathParser.evalBoolean(node, expression);
 	}
@@ -107,118 +56,25 @@ public class XNode {
 		return xpathParser.evalDouble(node, expression);
 	}
 
-	public List<XNode> evalNodes(String expression) {
-		return xpathParser.evalNodes(node, expression);
-	}
-
 	public XNode evalNode(String expression) {
 		return xpathParser.evalNode(node, expression);
 	}
 
-	public Node getNode() {
-		return node;
+	public List<XNode> evalNodes(String expression) {
+		return xpathParser.evalNodes(node, expression);
 	}
 
-	public String getName() {
-		return name;
+	public String evalString(String expression) {
+		return xpathParser.evalString(node, expression);
 	}
 
-	public String getStringBody() {
-		return getStringBody(null);
-	}
-
-	public String getStringBody(String def) {
-		if (body == null) {
-			return def;
-		} else {
-			return body;
+	private String getBodyData(Node child) {
+		if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
+			String data = ((CharacterData) child).getData();
+			data = PropertyParser.parse(data, variables);
+			return data;
 		}
-	}
-
-	public Boolean getBooleanBody() {
-		return getBooleanBody(null);
-	}
-
-	public Boolean getBooleanBody(Boolean def) {
-		if (body == null) {
-			return def;
-		} else {
-			return Boolean.valueOf(body);
-		}
-	}
-
-	public Integer getIntBody() {
-		return getIntBody(null);
-	}
-
-	public Integer getIntBody(Integer def) {
-		if (body == null) {
-			return def;
-		} else {
-			return Integer.parseInt(body);
-		}
-	}
-
-	public Long getLongBody() {
-		return getLongBody(null);
-	}
-
-	public Long getLongBody(Long def) {
-		if (body == null) {
-			return def;
-		} else {
-			return Long.parseLong(body);
-		}
-	}
-
-	public Double getDoubleBody() {
-		return getDoubleBody(null);
-	}
-
-	public Double getDoubleBody(Double def) {
-		if (body == null) {
-			return def;
-		} else {
-			return Double.parseDouble(body);
-		}
-	}
-
-	public Float getFloatBody() {
-		return getFloatBody(null);
-	}
-
-	public Float getFloatBody(Float def) {
-		if (body == null) {
-			return def;
-		} else {
-			return Float.parseFloat(body);
-		}
-	}
-
-	public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType, String name) {
-		return getEnumAttribute(enumType, name, null);
-	}
-
-	public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType, String name, T def) {
-		String value = getStringAttribute(name);
-		if (value == null) {
-			return def;
-		} else {
-			return Enum.valueOf(enumType, value);
-		}
-	}
-
-	public String getStringAttribute(String name) {
-		return getStringAttribute(name, null);
-	}
-
-	public String getStringAttribute(String name, String def) {
-		String value = attributes.getProperty(name);
-		if (value == null) {
-			return def;
-		} else {
-			return value;
-		}
+		return null;
 	}
 
 	public Boolean getBooleanAttribute(String name) {
@@ -234,55 +90,15 @@ public class XNode {
 		}
 	}
 
-	public Integer getIntAttribute(String name) {
-		return getIntAttribute(name, null);
+	public Boolean getBooleanBody() {
+		return getBooleanBody(null);
 	}
 
-	public Integer getIntAttribute(String name, Integer def) {
-		String value = attributes.getProperty(name);
-		if (value == null) {
+	public Boolean getBooleanBody(Boolean def) {
+		if (body == null) {
 			return def;
 		} else {
-			return Integer.parseInt(value);
-		}
-	}
-
-	public Long getLongAttribute(String name) {
-		return getLongAttribute(name, null);
-	}
-
-	public Long getLongAttribute(String name, Long def) {
-		String value = attributes.getProperty(name);
-		if (value == null) {
-			return def;
-		} else {
-			return Long.parseLong(value);
-		}
-	}
-
-	public Double getDoubleAttribute(String name) {
-		return getDoubleAttribute(name, null);
-	}
-
-	public Double getDoubleAttribute(String name, Double def) {
-		String value = attributes.getProperty(name);
-		if (value == null) {
-			return def;
-		} else {
-			return Double.parseDouble(value);
-		}
-	}
-
-	public Float getFloatAttribute(String name) {
-		return getFloatAttribute(name, null);
-	}
-
-	public Float getFloatAttribute(String name, Float def) {
-		String value = attributes.getProperty(name);
-		if (value == null) {
-			return def;
-		} else {
-			return Float.parseFloat(value);
+			return Boolean.valueOf(body);
 		}
 	}
 
@@ -310,6 +126,227 @@ public class XNode {
 			}
 		}
 		return properties;
+	}
+
+	public Double getDoubleAttribute(String name) {
+		return getDoubleAttribute(name, null);
+	}
+
+	public Double getDoubleAttribute(String name, Double def) {
+		String value = attributes.getProperty(name);
+		if (value == null) {
+			return def;
+		} else {
+			return Double.parseDouble(value);
+		}
+	}
+
+	public Double getDoubleBody() {
+		return getDoubleBody(null);
+	}
+
+	public Double getDoubleBody(Double def) {
+		if (body == null) {
+			return def;
+		} else {
+			return Double.parseDouble(body);
+		}
+	}
+
+	public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType, String name) {
+		return getEnumAttribute(enumType, name, null);
+	}
+
+	public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType, String name, T def) {
+		String value = getStringAttribute(name);
+		if (value == null) {
+			return def;
+		} else {
+			return Enum.valueOf(enumType, value);
+		}
+	}
+
+	public Float getFloatAttribute(String name) {
+		return getFloatAttribute(name, null);
+	}
+
+	public Float getFloatAttribute(String name, Float def) {
+		String value = attributes.getProperty(name);
+		if (value == null) {
+			return def;
+		} else {
+			return Float.parseFloat(value);
+		}
+	}
+
+	public Float getFloatBody() {
+		return getFloatBody(null);
+	}
+
+	public Float getFloatBody(Float def) {
+		if (body == null) {
+			return def;
+		} else {
+			return Float.parseFloat(body);
+		}
+	}
+
+	public Integer getIntAttribute(String name) {
+		return getIntAttribute(name, null);
+	}
+
+	public Integer getIntAttribute(String name, Integer def) {
+		String value = attributes.getProperty(name);
+		if (value == null) {
+			return def;
+		} else {
+			return Integer.parseInt(value);
+		}
+	}
+
+	public Integer getIntBody() {
+		return getIntBody(null);
+	}
+
+	public Integer getIntBody(Integer def) {
+		if (body == null) {
+			return def;
+		} else {
+			return Integer.parseInt(body);
+		}
+	}
+
+	public Long getLongAttribute(String name) {
+		return getLongAttribute(name, null);
+	}
+
+	public Long getLongAttribute(String name, Long def) {
+		String value = attributes.getProperty(name);
+		if (value == null) {
+			return def;
+		} else {
+			return Long.parseLong(value);
+		}
+	}
+
+	public Long getLongBody() {
+		return getLongBody(null);
+	}
+
+	public Long getLongBody(Long def) {
+		if (body == null) {
+			return def;
+		} else {
+			return Long.parseLong(body);
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Node getNode() {
+		return node;
+	}
+
+	public XNode getParent() {
+		Node parent = node.getParentNode();
+		if (parent == null || !(parent instanceof Element)) {
+			return null;
+		} else {
+			return new XNode(xpathParser, parent, variables);
+		}
+	}
+
+	public String getPath() {
+		StringBuilder builder = new StringBuilder();
+		Node current = node;
+		while (current != null && current instanceof Element) {
+			if (current != node) {
+				builder.insert(0, "/");
+			}
+			builder.insert(0, current.getNodeName());
+			current = current.getParentNode();
+		}
+		return builder.toString();
+	}
+
+	public String getStringAttribute(String name) {
+		return getStringAttribute(name, null);
+	}
+
+	public String getStringAttribute(String name, String def) {
+		String value = attributes.getProperty(name);
+		if (value == null) {
+			return def;
+		} else {
+			return value;
+		}
+	}
+
+	public String getStringBody() {
+		return getStringBody(null);
+	}
+
+	public String getStringBody(String def) {
+		if (body == null) {
+			return def;
+		} else {
+			return body;
+		}
+	}
+
+	public String getValueBasedIdentifier() {
+		StringBuilder builder = new StringBuilder();
+		XNode current = this;
+		while (current != null) {
+			if (current != this) {
+				builder.insert(0, "_");
+			}
+			String value = current.getStringAttribute("id",
+					current.getStringAttribute("value", current.getStringAttribute("property", null)));
+			if (value != null) {
+				value = value.replace('.', '_');
+				builder.insert(0, "]");
+				builder.insert(0, value);
+				builder.insert(0, "[");
+			}
+			builder.insert(0, current.getName());
+			current = current.getParent();
+		}
+		return builder.toString();
+	}
+
+	public XNode newXNode(Node node) {
+		return new XNode(xpathParser, node, variables);
+	}
+
+	private Properties parseAttributes(Node n) {
+		Properties attributes = new Properties();
+		NamedNodeMap attributeNodes = n.getAttributes();
+		if (attributeNodes != null) {
+			for (int i = 0; i < attributeNodes.getLength(); i++) {
+				Node attribute = attributeNodes.item(i);
+				String value = PropertyParser.parse(attribute.getNodeValue(), variables);
+				attributes.put(attribute.getNodeName(), value);
+			}
+		}
+		return attributes;
+	}
+
+	private String parseBody(Node node) {
+		String data = getBodyData(node);
+		if (data == null) {
+			NodeList children = node.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				data = getBodyData(child);
+				if (data != null) {
+					break;
+				}
+			}
+		}
+		return data;
 	}
 
 	@Override
@@ -344,43 +381,6 @@ public class XNode {
 		}
 		builder.append("\n");
 		return builder.toString();
-	}
-
-	private Properties parseAttributes(Node n) {
-		Properties attributes = new Properties();
-		NamedNodeMap attributeNodes = n.getAttributes();
-		if (attributeNodes != null) {
-			for (int i = 0; i < attributeNodes.getLength(); i++) {
-				Node attribute = attributeNodes.item(i);
-				String value = PropertyParser.parse(attribute.getNodeValue(), variables);
-				attributes.put(attribute.getNodeName(), value);
-			}
-		}
-		return attributes;
-	}
-
-	private String parseBody(Node node) {
-		String data = getBodyData(node);
-		if (data == null) {
-			NodeList children = node.getChildNodes();
-			for (int i = 0; i < children.getLength(); i++) {
-				Node child = children.item(i);
-				data = getBodyData(child);
-				if (data != null) {
-					break;
-				}
-			}
-		}
-		return data;
-	}
-
-	private String getBodyData(Node child) {
-		if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
-			String data = ((CharacterData) child).getData();
-			data = PropertyParser.parse(data, variables);
-			return data;
-		}
-		return null;
 	}
 
 }

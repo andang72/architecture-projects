@@ -59,18 +59,6 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		return new ExtendedJdbcTemplate(dataSource);
 	}
 
-	public ExtendedJdbcTemplate getExtendedJdbcTemplate() {
-		return (ExtendedJdbcTemplate) getJdbcTemplate();
-	}
-	
-	public boolean isSetConfiguration() {
-		if (sqlConfiguration == null)
-		    return false;
-		else
-		    return true;
-	    }
-
-
 	public BoundSql getBoundSql(String statement) {
 		if (isSetConfiguration()) {
 			MappedStatement stmt = sqlConfiguration.getMappedStatement(statement);
@@ -78,7 +66,7 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		}
 		return null;
 	}
-
+	
 	public BoundSql getBoundSql(String statement, Object... params) {
 		if (isSetConfiguration()) {
 			MappedStatement stmt = sqlConfiguration.getMappedStatement(statement);
@@ -86,6 +74,7 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		}
 		return null;
 	}
+
 
 	public BoundSql getBoundSqlWithAdditionalParameter(String statement, Object additionalParameter) {
 		if (isSetConfiguration()) {
@@ -102,5 +91,16 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		}
 		return null;
 	}
+
+	public ExtendedJdbcTemplate getExtendedJdbcTemplate() {
+		return (ExtendedJdbcTemplate) getJdbcTemplate();
+	}
+
+	public boolean isSetConfiguration() {
+		if (sqlConfiguration == null)
+		    return false;
+		else
+		    return true;
+	    }
 
 }

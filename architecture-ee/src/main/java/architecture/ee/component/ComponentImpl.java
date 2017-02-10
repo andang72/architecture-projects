@@ -26,18 +26,18 @@ public class ComponentImpl implements Component {
 	protected EventBus getEventBus(){
 		return eventBus;
 	}
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
 	public void publish(Object event) {		
 		if( eventBus != null)
 			eventBus.post(event);
 	}
-	
+
 	public void register () {
 		if( eventBus != null)
 			eventBus.register(this);
+	}
+	
+	public void setEventBus(EventBus eventBus) {
+		this.eventBus = eventBus;
 	}
 	
 	public void unregister (){

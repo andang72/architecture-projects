@@ -22,6 +22,10 @@ import architecture.ee.service.VariableMap;
 
 public class StringUtils extends org.springframework.util.StringUtils {
 
+	public static String defaultString(final String str, final String defaultStr) {
+		return str == null ? defaultStr : str;
+	}
+
 	public static String expend(String expression, Properties props) {
 		VariableMap variables = new VariableMapImpl(props);
 		return variables.expand(expression);
@@ -29,9 +33,5 @@ public class StringUtils extends org.springframework.util.StringUtils {
 
 	public static boolean isNullOrEmpty(String str) {
 		return com.google.common.base.Strings.isNullOrEmpty(str);
-	}
-
-	public static String defaultString(final String str, final String defaultStr) {
-		return str == null ? defaultStr : str;
 	}
 }

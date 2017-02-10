@@ -25,12 +25,14 @@ import architecture.ee.jdbc.sqlquery.factory.impl.SqlQueryFactoryImpl;
 
 public class SqlQueryFactoryBuilderBean implements InitializingBean, DisposableBean, FactoryBean<SqlQueryFactory> {
 
-	public boolean isSingleton() {
-		return true;
+	public void afterPropertiesSet() throws Exception {		
 	}
 	
 	public SqlQueryFactory build(Configuration config) {
 	    return new SqlQueryFactoryImpl(config);
+	}
+
+	public void destroy() throws Exception {		
 	}
 
 	public SqlQueryFactory getObject() throws Exception {		
@@ -42,10 +44,8 @@ public class SqlQueryFactoryBuilderBean implements InitializingBean, DisposableB
 		return SqlQueryFactory.class;
 	}
 
-	public void destroy() throws Exception {		
-	}
-
-	public void afterPropertiesSet() throws Exception {		
+	public boolean isSingleton() {
+		return true;
 	}
 
 }

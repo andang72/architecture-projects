@@ -67,22 +67,10 @@ public class Configuration {
 	protected final ConcurrentMap<String, List<XNode>> statementNodesToParse = new ConcurrentHashMap<String, List<XNode>>();
 
 	
-	public String getPrefix() {
-		return prefix;
+	public void addLoadedResource(String resource) {
+		loadedResources.add(resource);
 	}
 
-	public String getSuffix() {
-		return suffix;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = (prefix != null ? prefix : "");
-	}
-	
-	public void setSuffix(String suffix) {
-		this.suffix = (suffix != null ? suffix : "");
-	}
-	
 	public void addMappedStatement(MappedStatement statement) {
 		mappedStatements.put(statement.getId(), statement);
 	}
@@ -90,56 +78,11 @@ public class Configuration {
 	public void addStatementNodes(String namespace, List<XNode> nodes) {
 		statementNodesToParse.put(namespace, nodes);
 	}
-
-	public void addLoadedResource(String resource) {
-		loadedResources.add(resource);
-	}
-
-	public boolean isResourceLoaded(String resource) {
-		return loadedResources.contains(resource);
-	}
-
-	public void removeLoadedResource(String resource) {
-		loadedResources.remove(resource);
-	}
-
-	public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
-		this.defaultStatementTimeout = defaultStatementTimeout;
-	}
-
-	public Integer getDefaultStatementTimeout() {
-		return defaultStatementTimeout;
-	}
-			
-	public Set<MappedStatement> getMappedStatements() {
-		buildAllStatements();
-		return mappedStatements.values();
-    }
-
-	public MappedStatement getMappedStatement(String id) {
-	
-		if( !StringUtils.isNullOrEmpty(id) && mappedStatements.containsKey(id) ){
-			return mappedStatements.get(id);
-		}
-		throw new SqlNotFoundException( "" );
-	}
-
-	public boolean hasStatement(String statementName) {
-		return hasStatement(statementName, true);
-	}
-
-	public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
-		if (validateIncompleteStatements) {
-			buildAllStatements();
-		}
-		return mappedStatements.containsKey(statementName);
-	}
-	  
 	
 	protected void buildAllStatements() {			
 			
 	}
-
+	
 	/**
 	 * Extracts namespace from fully qualified statement id.
 	 * 
@@ -149,6 +92,31 @@ public class Configuration {
 	protected String extractNamespace(String statementId) {
 		int lastPeriod = statementId.lastIndexOf('.');
 		return lastPeriod > 0 ? statementId.substring(0, lastPeriod) : null;
+	}
+
+	public Integer getDefaultStatementTimeout() {
+		return defaultStatementTimeout;
+	}
+
+	public MappedStatement getMappedStatement(String id) {
+	
+		if( !StringUtils.isNullOrEmpty(id) && mappedStatements.containsKey(id) ){
+			return mappedStatements.get(id);
+		}
+		throw new SqlNotFoundException( "" );
+	}
+
+	public Set<MappedStatement> getMappedStatements() {
+		buildAllStatements();
+		return mappedStatements.values();
+    }
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public String getSuffix() {
+		return suffix;
 	}
 
 	public TypeAliasRegistry getTypeAliasRegistry() {
@@ -225,4 +193,36 @@ public class Configuration {
 			}
 		}
 	}**/
+			
+	public boolean hasStatement(String statementName) {
+		return hasStatement(statementName, true);
+	}
+
+	public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
+		if (validateIncompleteStatements) {
+			buildAllStatements();
+		}
+		return mappedStatements.containsKey(statementName);
+	}
+
+	public boolean isResourceLoaded(String resource) {
+		return loadedResources.contains(resource);
+	}
+
+	public void removeLoadedResource(String resource) {
+		loadedResources.remove(resource);
+	}
+	  
+	
+	public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
+		this.defaultStatementTimeout = defaultStatementTimeout;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = (prefix != null ? prefix : "");
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = (suffix != null ? suffix : "");
+	}
 }

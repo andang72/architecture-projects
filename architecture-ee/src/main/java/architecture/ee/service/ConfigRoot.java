@@ -20,8 +20,8 @@ import java.net.URI;
 
 public interface ConfigRoot {
 	
-	public URI getRootURI();
-	
 	public abstract File getFile(String name);
+	
+	public URI getRootURI();
 
 }

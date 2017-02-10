@@ -20,17 +20,17 @@ import java.util.Map;
 
 public interface ApplicationProperties extends Map<String, String>  {
 	
-	public abstract Collection<String> getChildrenNames(String name);
-
-	public abstract Collection<String> getPropertyNames();
-
 	public abstract boolean getBooleanProperty(String name);
 
 	public abstract boolean getBooleanProperty(String name, boolean defaultValue);
 
+	public abstract Collection<String> getChildrenNames(String name);
+
 	public abstract int getIntProperty(String name, int defaultValue);
 
 	public abstract long getLongProperty(String name, long defaultValue);
+
+	public abstract Collection<String> getPropertyNames();
 
 	public abstract String getStringProperty(String name, String defaultValue);
 	

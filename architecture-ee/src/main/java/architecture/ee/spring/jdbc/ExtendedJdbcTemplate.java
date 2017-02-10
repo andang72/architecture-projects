@@ -38,62 +38,7 @@ import architecture.ee.spring.jdbc.ExtendedJdbcUtils.DB;
 public class ExtendedJdbcTemplate extends JdbcTemplate {
 
 	
-	 public ExtendedJdbcTemplate() {
-		super();
-	}
-
-	public ExtendedJdbcTemplate(DataSource dataSource, boolean lazyInit) {
-		super(dataSource, lazyInit);
-	}
-
-	public ExtendedJdbcTemplate(DataSource dataSource) {
-		super(dataSource);
-	}
-
-	
-	
-	public DB getDBInfo(){
-		DB db = DB.UNKNOWN;		
-		try {
-			db = ExtendedJdbcUtils.extractDB(getDataSource().getConnection());
-		} catch (SQLException e) {
-		}		
-		return db;
-	}
-	
-	// *********************************************
-    // Public Methods for Scrollable
-    // ********************************************
-
-	public  List<Map<String, Object>> query( String sql, int startIndex, int numResults) throws DataAccessException {			
-		return query(
-			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ),
-			null,
-			new ScrollableResultSetExtractor<Map<String, Object>>(getDBInfo(), getColumnMapRowMapper(), startIndex, numResults));
-	}	
-	
-	public  List<Map<String, Object>> query( String sql, int startIndex, int numResults, Object... args) throws DataAccessException {			
-		return query(
-			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ), 
-			newArgPreparedStatementSetter(args), 
-			new ScrollableResultSetExtractor<Map<String, Object>>(getDBInfo(), getColumnMapRowMapper(), startIndex, numResults));
-	}	
-	
-	public  <T> List<T> query( String sql, int startIndex, int numResults, RowMapper<T> rowMapper, Object... args) throws DataAccessException {			
-		return query(
-			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ), 
-			newArgPreparedStatementSetter(args), 
-			new ScrollableResultSetExtractor<T>(getDBInfo(), rowMapper,startIndex, numResults));
-	}			
-	
-	// *********************************************
-    // Public Methods for Update and Batch
-    // *********************************************
-
-	
-	
-	
-	/**
+	 /**
      * INNER CLASSES
      */
 	
@@ -140,8 +85,7 @@ public class ExtendedJdbcTemplate extends JdbcTemplate {
 			return this.sql;
 		}
 	}
-	
-	
+
 	public static class ScrollableResultSetExtractor<T> implements ResultSetExtractor<List<T>> {
 
 		private int startIndex;
@@ -185,6 +129,62 @@ public class ExtendedJdbcTemplate extends JdbcTemplate {
 			}
 			return results;
 		}
+	}
+
+	public ExtendedJdbcTemplate() {
+		super();
+	}
+
+	
+	
+	public ExtendedJdbcTemplate(DataSource dataSource) {
+		super(dataSource);
+	}
+	
+	// *********************************************
+    // Public Methods for Scrollable
+    // ********************************************
+
+	public ExtendedJdbcTemplate(DataSource dataSource, boolean lazyInit) {
+		super(dataSource, lazyInit);
+	}	
+	
+	public DB getDBInfo(){
+		DB db = DB.UNKNOWN;		
+		try {
+			db = ExtendedJdbcUtils.extractDB(getDataSource().getConnection());
+		} catch (SQLException e) {
+		}		
+		return db;
+	}	
+	
+	public  List<Map<String, Object>> query( String sql, int startIndex, int numResults) throws DataAccessException {			
+		return query(
+			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ),
+			null,
+			new ScrollableResultSetExtractor<Map<String, Object>>(getDBInfo(), getColumnMapRowMapper(), startIndex, numResults));
+	}			
+	
+	// *********************************************
+    // Public Methods for Update and Batch
+    // *********************************************
+
+	
+	
+	
+	public  List<Map<String, Object>> query( String sql, int startIndex, int numResults, Object... args) throws DataAccessException {			
+		return query(
+			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ), 
+			newArgPreparedStatementSetter(args), 
+			new ScrollableResultSetExtractor<Map<String, Object>>(getDBInfo(), getColumnMapRowMapper(), startIndex, numResults));
+	}
+	
+	
+	public  <T> List<T> query( String sql, int startIndex, int numResults, RowMapper<T> rowMapper, Object... args) throws DataAccessException {			
+		return query(
+			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ), 
+			newArgPreparedStatementSetter(args), 
+			new ScrollableResultSetExtractor<T>(getDBInfo(), rowMapper,startIndex, numResults));
 	}
 
 }
