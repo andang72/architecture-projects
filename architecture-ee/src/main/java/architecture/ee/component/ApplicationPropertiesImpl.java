@@ -33,6 +33,22 @@ import architecture.ee.util.xml.XmlProperties;
  */
 public class ApplicationPropertiesImpl implements ApplicationProperties {
 	
+    private static final String ENCRYPTED_PROPERTY_NAME_PREFIX = "encrypt.";
+    
+    private static final String ENCRYPTED_PROPERTY_NAMES = ENCRYPTED_PROPERTY_NAME_PREFIX + "property.name";
+    
+    private static final String ENCRYPTION_ALGORITHM = ENCRYPTED_PROPERTY_NAME_PREFIX + "algorithm";
+    
+    private static final String ENCRYPTION_KEY_CURRENT = ENCRYPTED_PROPERTY_NAME_PREFIX + "key.current";
+    
+    private static final String ENCRYPTION_KEY_NEW = ENCRYPTED_PROPERTY_NAME_PREFIX + "key.new";
+    
+    private static final String ENCRYPTION_KEY_OLD = ENCRYPTED_PROPERTY_NAME_PREFIX + "key.old";
+    
+    private static final String ENCRYPTION_ALGORITHM_AES = "AES";
+    
+    private static final String ENCRYPTION_ALGORITHM_BLOWFISH = "Blowfish";
+    
 	private XmlProperties properties;
 
 	public ApplicationPropertiesImpl(File fileToUse) throws IOException {

@@ -74,6 +74,8 @@ public class XmlProperties {
 
 	private Document document;
 
+	private static final String ENCRYPTED_ATTRIBUTE = "encrypted";
+	
 	/**
 	 * Parsing the XML file every time we need a property is slow. Therefore, we
 	 * use a Map to cache property values that are accessed more than once.

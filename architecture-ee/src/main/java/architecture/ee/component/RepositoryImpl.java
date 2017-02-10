@@ -76,8 +76,7 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 				initailized.set(true);
 			} catch (IOException e) {
 				log.error("faile to .. ", e);
-			}
-			
+			}			
 		}
 	}
 
@@ -87,8 +86,6 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 			Resource child = new FileSystemResource(file);
 			
 			log.debug("config exists : " + child.exists());
-			
-			
 			
 			return new ConfigRootImpl(child);
 		} catch (Exception e) {
