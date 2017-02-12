@@ -22,6 +22,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.servlet.ServletContext;
 
@@ -52,8 +54,11 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 
 	private Resource rootResource = getRootResource();
 
+	private Lock lock = new ReentrantLock();
+	
 	private ApplicationProperties setupProperties = null;
 	
+	private State state = State.NONE;
 	
 	public ConfigRoot getConfigRoot() {
 		try {
@@ -86,7 +91,9 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 	public ApplicationProperties getSetupApplicationProperties() {
 		if (setupProperties == null) {
 			if(initailized.get()){
+				
 				File file = getFile(ApplicationConstants.DEFAULT_STARTUP_FILENAME);
+				
 				if (!file.exists()){
 					
 					boolean error = false;
@@ -94,6 +101,9 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 				    log.debug("No startup file now create !!! {}", file.getAbsolutePath());
 				    Writer writer = null;
 				    try {
+				    	
+				    	lock.lock();
+				    	
 				    	writer = new OutputStreamWriter(new FileOutputStream(file),	StandardCharsets.UTF_8);
 				    	XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
 				    	StringBuilder sb = new StringBuilder();
@@ -155,6 +165,7 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 					    	log.error("fail to making {} - {}", file.getName(), e.getMessage());				    	
 					    	error = true;
 					    } finally {
+					    	
 						try {
 						    writer.flush();
 						    writer.close();
@@ -162,7 +173,12 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						    log.error("error" , e);
 						    error = true;
 						}
+						
+						lock.unlock();
+						
 				    }	
+				    
+				    
 				}else{
 					try {
 						log.debug("load from {}", file.getAbsolutePath() );
@@ -179,9 +195,13 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 	}
 
 	public void initialize(){
+		state = State.INITIALIZING;
+		
 		if(initailized.get()) {			
 			log.debug("initialized");
 		}
+		
+		state = State.INITIALIZED;
 	}
 	
 	public void setServletContext(ServletContext servletContext) {
