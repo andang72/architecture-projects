@@ -1,6 +1,6 @@
 # architecture-projects
 
-architecture-ee
+##architecture-ee
 
 Mybatis +Spring 사용이 일반화된 지금 대부분의 실 프로젝트를 자세히 보면 ORM 이 목적이 아닌 단순하게 쿼리와 자바 로직을 분리하는 정도로 사용하는 것으로 보인다. 
 참고로 Hibernate는 여러 장점이 있으나 투자한 시간 대비 성능적으로 너무 실망스러웠다.
@@ -10,7 +10,8 @@ Mybatis +Spring 사용이 일반화된 지금 대부분의 실 프로젝트를 �
 이런 이유에서 Mybatis와 Hibernate API 및 코드를 참고하여 XML기반의 전통적인 JDBC 프로그래밍을 손쉬게 구현하고자 한다. 
 
 
-architecture-community
+##architecture-community
+
 해외에는 다양향 게시판, 그룹웨어, 포털 등  다양한 종류의 오픈소스들이 있다. 아쉬운 것은 아직 국내에서는 이러한 프로젝트들이 없는 것 같아.
 미약하지만 architecture-ee 를  사용하여 퍼시스턴스 레이어를 구현하는 간단한 게시판 기반의 케뮤니티를 만들어 보고자 한다.
 
