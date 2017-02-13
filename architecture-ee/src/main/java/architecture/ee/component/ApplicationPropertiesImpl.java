@@ -68,7 +68,7 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 	}
 
 	public void clear() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Not implemented in local version");
 	}
 
 	public boolean containsKey(Object key) {
@@ -76,11 +76,11 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 	}
 
 	public boolean containsValue(Object value) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Not implemented in local version");
 	}
 
 	public Set<java.util.Map.Entry<String, String>> entrySet() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Not implemented in local version");
 	}
 
 	public String get(Object key) {
@@ -124,7 +124,7 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 	}
 
 	public Set<String> keySet() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Not implemented in local version");
 	}
 
 	public String put(String key, String value) {
@@ -142,7 +142,7 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 	}
 
 	public int size() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Not implemented in local version");
 	}
 
 	@Override
