@@ -15,6 +15,51 @@
  */
 package architecture.ee.service;
 
+import java.util.List;
+import java.util.Map;
+/**
+ * 
+ * @author donghyuck
+ *
+ */
 public interface ConfigService {
+	/**
+	 * startup-config.xml 파일에 저장된 프로퍼티 값을 리턴한다.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public String getLocalProperty(String name);
+	
+	public int getLocalProperty(String name, int defaultValue);
+	
+	/**
+	 * 자식에 해당하는 프로퍼티 값들을 리턴한다.
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	public List<String> getLocalProperties(String parent);
+	
+	
+	/**
+	 * 프로퍼티 값을 설정 한다. 
+	 * @param name
+	 * @param value
+	 */
+	public void setLocalProperty(String name, String value);
+	
+	/**
+	 * 한번에 여러 프로퍼티 값들을 저장한다. 
+	 * 
+	 * @param propertyMap
+	 */
+	public void setLocalProperties(Map<String,String> propertyMap);
+	
+	/**
+	 * name 에 해당하는 프로퍼티를 삭제한다.
+	 * @param name
+	 */
+	public void deleteLocalProperty(String name);
 
 }

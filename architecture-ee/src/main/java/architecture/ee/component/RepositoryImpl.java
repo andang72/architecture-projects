@@ -188,7 +188,7 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 					}
 				}
 			}else{
-				return EmptyApplicationProperties.getInstance();
+				return ApplicationPropertiesImpl.EMPTY_APPLICATION_PROPERTIES;
 			}
 		}
 		return setupProperties ;

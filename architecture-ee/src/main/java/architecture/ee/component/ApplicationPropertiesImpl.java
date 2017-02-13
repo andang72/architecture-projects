@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +33,8 @@ import architecture.ee.util.xml.XmlProperties;
  *
  */
 public class ApplicationPropertiesImpl implements ApplicationProperties {
+	
+	public static final ApplicationProperties EMPTY_APPLICATION_PROPERTIES = new EmptyApplicationProperties();	
 	
     private static final String ENCRYPTED_PROPERTY_NAME_PREFIX = "encrypt.";
     
@@ -150,4 +153,88 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
 		throw new UnsupportedOperationException();
 	}
 
+	
+	private static class EmptyApplicationProperties implements ApplicationProperties {
+
+		
+		public EmptyApplicationProperties() {		
+		}
+		
+
+		public void clear() {
+		}
+
+		public boolean containsKey(Object key) {
+			return false;
+		}
+
+		public boolean containsValue(Object value) {
+			return false;
+		}
+
+		public Set<java.util.Map.Entry<String, String>> entrySet() {
+			return null;
+		}
+
+		public String get(Object key) {
+			return null;
+		}
+
+		public boolean getBooleanProperty(String name) {
+			return false;
+		}
+
+		public boolean getBooleanProperty(String name, boolean defaultValue) {
+			return false;
+		}
+
+		public Collection<String> getChildrenNames(String name) {
+			return Collections.emptyList();
+		}
+
+		public int getIntProperty(String name, int defaultValue) {
+			return 0;
+		}
+
+		public long getLongProperty(String name, long defaultValue) {
+			return 0;
+		}
+
+		public Collection<String> getPropertyNames() {
+			return Collections.emptyList();
+		}
+
+		public String getStringProperty(String name, String defaultValue) {
+			return defaultValue;
+		}
+
+		public boolean isEmpty() {
+			return true;
+		}
+
+		public Set<String> keySet() {
+			return Collections.emptySet();
+		}
+
+		public String put(String key, String value) {
+			return null;
+		}
+
+		public void putAll(Map<? extends String, ? extends String> m) {
+		}
+
+		public String remove(Object key) {
+			return null;
+		}
+
+		public int size() {
+			return 0;
+		}
+
+		public Collection<String> values() {
+			return Collections.emptyList();
+		}
+
+	}
+	
 }

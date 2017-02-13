@@ -24,21 +24,10 @@ import architecture.ee.service.ApplicationProperties;
 
 public class EmptyApplicationProperties implements ApplicationProperties {
 
-	private static class InstanceHolder {
-
-		private static final EmptyApplicationProperties instance = new EmptyApplicationProperties();
-
-		private InstanceHolder() {
-		}
+	
+	public EmptyApplicationProperties() {		
 	}
-
-	public static EmptyApplicationProperties getInstance() {
-		return InstanceHolder.instance;
-	}
-
-	private EmptyApplicationProperties() {
-		
-	}
+	
 
 	public void clear() {
 	}
