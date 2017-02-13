@@ -32,7 +32,7 @@ import architecture.ee.util.xml.XmlProperties;
  * @author donghyuck
  *
  */
-public class ApplicationPropertiesImpl implements ApplicationProperties {
+public class LocalApplicationProperties implements ApplicationProperties {
 	
 	
 	public static final ApplicationProperties EMPTY_APPLICATION_PROPERTIES = new EmptyApplicationProperties();	
@@ -55,15 +55,15 @@ public class ApplicationPropertiesImpl implements ApplicationProperties {
     
 	private XmlProperties properties;
 
-	public ApplicationPropertiesImpl(File fileToUse) throws IOException {
+	public LocalApplicationProperties(File fileToUse) throws IOException {
 		properties = new XmlProperties(fileToUse);
 	}
 
-	public ApplicationPropertiesImpl(InputStream in) throws Exception {
+	public LocalApplicationProperties(InputStream in) throws Exception {
 		properties = new XmlProperties(in);
 	}
 
-	public ApplicationPropertiesImpl(String fileName) throws IOException {
+	public LocalApplicationProperties(String fileName) throws IOException {
 		properties = new XmlProperties(fileName);
 	}
 

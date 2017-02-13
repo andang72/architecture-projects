@@ -182,13 +182,13 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 				}else{
 					try {
 						log.debug("load from {}", file.getAbsolutePath() );
-						this.setupProperties = new ApplicationPropertiesImpl(file);
+						this.setupProperties = new LocalApplicationProperties(file);
 					} catch (IOException e) {
 						 log.error("error" , e);
 					}
 				}
 			}else{
-				return ApplicationPropertiesImpl.EMPTY_APPLICATION_PROPERTIES;
+				return LocalApplicationProperties.EMPTY_APPLICATION_PROPERTIES;
 			}
 		}
 		return setupProperties ;
