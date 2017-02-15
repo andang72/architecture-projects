@@ -93,13 +93,13 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 	
 	public void initialize() {
 		
-		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZING);
+		fireStateChangeEvent("SQL QUERY SERVICE", State.NONE, State.INITIALIZING);
 		
 		if (resourceLocations!=null && resourceLocations.size() > 0){
 			buildFromResourceLocations();
 		}
 		
-		fireStateChangeEvent("SQL QUERY", State.NONE, State.INITIALIZED);
+		fireStateChangeEvent("SQL QUERY SERVICE", State.INITIALIZING, State.INITIALIZED);
 		
 	}
 	

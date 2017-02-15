@@ -34,7 +34,6 @@ import architecture.ee.util.xml.XmlProperties;
  */
 public class LocalApplicationProperties implements ApplicationProperties {
 	
-	
 	public static final ApplicationProperties EMPTY_APPLICATION_PROPERTIES = new EmptyApplicationProperties();	
 	
     private static final String ENCRYPTED_PROPERTY_NAME_PREFIX = "encrypt.";

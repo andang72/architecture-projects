@@ -164,27 +164,6 @@ public class DirectoryScanner {
 			}else{
 				directoryFile = repository.getFile(path);
 			}
-			
-//			
-//			if (directory.startsWith("${") && directory.endsWith("}")) {
-//				
-//				
-//				
-//				String key = directory.substring(directory.indexOf('{') + 1, directory.indexOf('}')).trim();
-//				
-//				String value = repository.getSetupApplicationProperties().getStringProperty(key, null);			
-//				
-//				log.debug("{} searching in setup porpertise ... > {} = {}", directory, key, value);
-//				
-//				if( StringUtils.startsWithIgnoreCase(value, "file:")){					
-//					try {
-//						directoryFile = resourceLoader.getResource(value).getFile();
-//					} catch (IOException e) {
-//					}					
-//				}else{
-//					directoryFile = repository.getFile(value);
-//				}
-//			}
 		}
 		log.debug("starting directory scanner : '{}'" , directory, directoryFile);	
 		if( directoryFile != null)

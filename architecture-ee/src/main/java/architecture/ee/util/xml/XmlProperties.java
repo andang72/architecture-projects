@@ -684,6 +684,8 @@ public class XmlProperties {
 	 *            the new value for the property.
 	 */
 	public synchronized void setProperty(String name, String value) {
+		
+		
 		if (!XmlEscapers.xmlContentEscaper().escape(name).equals(name)) {
 			throw new IllegalArgumentException();// L10NUtils.getMessage("002155"));
 		}

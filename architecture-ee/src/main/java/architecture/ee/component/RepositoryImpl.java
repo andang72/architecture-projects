@@ -92,10 +92,8 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 		if (setupProperties == null) {
 			if(initailized.get()){
 				
-				File file = getFile(ApplicationConstants.DEFAULT_STARTUP_FILENAME);
-				
-				if (!file.exists()){
-					
+				File file = getFile(ApplicationConstants.DEFAULT_STARTUP_FILENAME);				
+				if (!file.exists()){					
 					boolean error = false;
 				    // create default file...
 				    log.debug("No startup file now create !!! {}", file.getAbsolutePath());
@@ -107,6 +105,8 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 				    	writer = new OutputStreamWriter(new FileOutputStream(file),	StandardCharsets.UTF_8);
 				    	XMLWriter xmlWriter = new XMLWriter(writer, OutputFormat.createPrettyPrint());
 				    	StringBuilder sb = new StringBuilder();
+				    	
+				    	
 						org.dom4j.Document document = org.dom4j.DocumentHelper.createDocument();
 						org.dom4j.Element root = document.addElement("startup-config");
 						// setup start
@@ -131,8 +131,7 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						*/
 						// view end
 						
-						// security start
-						
+						// security start						
 						org.dom4j.Element securityNode = root.addElement("security");
 						org.dom4j.Element encrpptNode = securityNode.addElement("encrypt");
 						encrpptNode.addElement("algorithm").setText("Blowfish");;
@@ -141,7 +140,6 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						encrpptPropertyNode.addElement("name").setText("username");
 						encrpptPropertyNode.addElement("name").setText("password");						
 						securityNode.addElement("authentication").addElement("encoding").addElement("algorithm").setText("SHA-256");
-
 						// security end
 						// scripting start
 	
@@ -172,13 +170,9 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						} catch (Exception e) {
 						    log.error("error" , e);
 						    error = true;
-						}
-						
-						lock.unlock();
-						
+						}						
+						lock.unlock();						
 				    }	
-				    
-				    
 				}else{
 					try {
 						log.debug("load from {}", file.getAbsolutePath() );
