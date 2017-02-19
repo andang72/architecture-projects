@@ -23,7 +23,7 @@ import java.util.Map;
  * @author donghyuck
  *
  */
-public interface ConfigService {
+public interface ConfigService extends EventTarget {
 	/**
 	 * startup-config.xml 파일에 저장된 프로퍼티 값을 리턴한다.
 	 * 

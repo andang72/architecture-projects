@@ -24,6 +24,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import com.google.common.eventbus.Subscribe;
+
+import architecture.ee.component.event.PropertyChangeEvent;
 import architecture.ee.service.ConfigService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -56,5 +59,26 @@ public class ConfigServiceTest {
 		value = configService.getLocalProperty(name);
 		log.debug( "after set {}={}" , name, value);	
 	}
+
+	@Test
+	public void testJdbcSetGetProperty(){
+		configService.registerEventListener(new PropertyChangeEventListener());	
+		
+		if( configService.getApplicationProperty("welcome.message", null) != null )
+			configService.deleteApplicationProperty("welcome.message");
+		
+		if( configService.getApplicationProperty("welcome.message", null) == null )
+			configService.setApplicationProperty("welcome.message", "안녕하신가요 !!");
+		
+		
+	}
 	
+	class PropertyChangeEventListener {
+		
+		@Subscribe 
+		public void handel(PropertyChangeEvent e) {
+		    log.debug("EVENT ************** {} {}", e.getSource().getClass().getName(), e.getEventType().name());
+		}
+		
+	}
 }

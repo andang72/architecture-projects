@@ -100,9 +100,17 @@ public class ConfigServiceImpl implements ConfigService {
 			try {
 				JdbcApplicationProperties impl = new JdbcApplicationProperties(localized);
 				impl.setSqlConfiguration(sqlConfiguration);
+				impl.setEventBus(eventBus);
+				//ConfigurableJdbcApplicationProperties impl = new ConfigurableJdbcApplicationProperties(localized);
+				
+				
 				impl.setDataSource(dataSourceToUse);
 				impl.afterPropertiesSet();
+				
+				logger.debug("Jdbc properties loaded : {}", impl.getPropertyNames() );
+				
 				return impl;
+				
 			} catch (Exception e) {
 				throw new ConfigurationError(e);
 			}
@@ -203,6 +211,17 @@ public class ConfigServiceImpl implements ConfigService {
 	@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
 	public void deleteApplicationProperty(String name) {
 		getApplicationProperties().remove(name);
+	}
+
+	public void registerEventListener(Object listener) {
+		if( eventBus != null)
+			eventBus.register(listener);
+	}
+
+	@Override
+	public void unregisterEventListener(Object listener) {
+		if( eventBus != null)
+			eventBus.unregister(listener);
 	}
 
 }

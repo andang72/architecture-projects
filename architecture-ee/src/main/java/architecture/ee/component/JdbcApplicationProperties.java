@@ -33,7 +33,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.SqlParameterValue;
 
+import com.google.common.eventbus.EventBus;
+
+import architecture.ee.component.event.PropertyChangeEvent;
 import architecture.ee.service.ApplicationProperties;
 import architecture.ee.spring.jdbc.ExtendedJdbcDaoSupport;
 import architecture.ee.spring.jdbc.ExtendedJdbcUtils.DB;
@@ -43,6 +47,8 @@ import architecture.ee.util.StringUtils;
 
 public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements ApplicationProperties {
 
+	private EventBus eventBus;
+	
 	protected final AtomicBoolean initFlag = new AtomicBoolean();
 	
 	private boolean localized;
@@ -51,6 +57,10 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 
 	protected JdbcApplicationProperties(boolean localized) {
 		this.localized = localized;
+	}
+
+	public void setEventBus(EventBus eventBus) {
+		this.eventBus = eventBus;
 	}
 
 	protected void initDao() throws Exception {
@@ -133,8 +143,7 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 				if (!results.contains(key))
 					results.add(key);
 			} else {
-				String name = (new StringBuilder()).append(parentKey)
-						.append(key.substring(parentKey.length(), dotIndex)).toString();
+				String name = (new StringBuilder()).append(parentKey).append(key.substring(parentKey.length(), dotIndex)).toString();
 				results.add(name);
 			}
 		}
@@ -166,11 +175,17 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 		return properties.isEmpty();
 	}
 
+	private void firePropertyChangeEvent(PropertyChangeEvent.Type eventType, String propertyName, Object oldValue, Object newValue){		
+		if( eventBus != null ){
+			PropertyChangeEvent event = new PropertyChangeEvent(this, eventType, propertyName, oldValue, newValue);
+			eventBus.post(event);
+		}
+	}
+	
 	public String put(String key, String value) {
 		String s;
 		if (key == null || value == null)
-			throw new NullPointerException((new StringBuilder()).append("Key or value cannot be null. Key=").append(key)
-					.append(", value=").append(value).toString());
+			throw new NullPointerException((new StringBuilder()).append("Key or value cannot be null. Key=").append(key).append(", value=").append(value).toString());
 
 		if ("".equals(key)) {
 			logger.warn("Can not save a blank key: {}",key);
@@ -185,19 +200,15 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 				key = key.substring(0, key.length() - 1);
 			key = key.trim();
 			String oldValue = (String) properties.put(key, value);
+			
 			if (oldValue != null) {
 				if (!oldValue.equals(value)) {
 					updateProperty(key, value);
-					HashMap<String, Object> params = new HashMap<String, Object>();
-					params.put("PARAM_MODIFIED_OLD_VALUE", oldValue);
-					// firePropertyChangeEvent(this,
-					// ApplicationPropertyChangeEvent.Type.MODIFIED, (String)
-					// key, value, params);
+					firePropertyChangeEvent(PropertyChangeEvent.Type.MODIFIED, key, oldValue, value);
 				}
 			} else {
 				insertProperty(key, value);
-				// firePropertyChangeEvent(this,
-				// ApplicationPropertyChangeEvent.Type.ADDED, key, value, null);
+				firePropertyChangeEvent(PropertyChangeEvent.Type.ADDED, key, null, value);
 			}
 			// CacheFactory.doClusterTask(new PropertyClusterPutTask(key, value,
 			// localized));
@@ -208,7 +219,6 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 
 	public String remove(Object key) {
 		String s;
-
 		String value = (String) properties.remove(key);
 
 		if (value != null) {
@@ -221,11 +231,7 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 					removedValues.add(properties.remove(name));
 			}
 			deleteProperty((String) key);
-
-			// HashMap params = new HashMap();
-			// params.put("PARAM_REMOVED_VALUES", removedValues);
-			// firePropertyChangeEvent(this, PropertyChangeEvent.Type.REMOVED,
-			// (String) key, value, params);
+			firePropertyChangeEvent(PropertyChangeEvent.Type.REMOVED, key.toString(), null, removedValues);
 		}
 
 		s = value;
@@ -251,11 +257,13 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 				String localeCode = StringUtils.substringAfterLast(name, ".");
 				getExtendedJdbcTemplate().update(
 						getBoundSql("ARCHITECTURE_FRAMEWORK.INSERT_LOCALIZED_PROPERTY").getSql(),
-						new Object[] { baseKey, value, localeCode },
-						new int[] { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR });
+						new SqlParameterValue(Types.VARCHAR, baseKey),
+						new SqlParameterValue(Types.VARCHAR, value),
+						new SqlParameterValue(Types.VARCHAR, localeCode));
 			} else {
 				getExtendedJdbcTemplate().update(getBoundSql("ARCHITECTURE_FRAMEWORK.INSERT_PROPERTY").getSql(),
-						new Object[] { name, value }, new int[] { Types.VARCHAR, Types.VARCHAR });
+						new SqlParameterValue(Types.VARCHAR, name),
+						new SqlParameterValue(Types.VARCHAR, value));
 			}
 		}
 	}
@@ -265,17 +273,15 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 			if (localized) {
 				String baseKey = StringUtils.substringBeforeLast(name, ".");
 				String localeCode = StringUtils.substringAfterLast(name, ".");
-
-				getExtendedJdbcTemplate().update(
-						getBoundSql("ARCHITECTURE_FRAMEWORK.DELETE_LOCALIZED_PROPERTY").getSql(),
-						new Object[] { (new StringBuilder()).append(baseKey).append("%").toString(),
-								(new StringBuilder()).append(localeCode).append("%").toString() },
-						new int[] { Types.VARCHAR, Types.VARCHAR });
+				getExtendedJdbcTemplate().update(getBoundSql("ARCHITECTURE_FRAMEWORK.DELETE_LOCALIZED_PROPERTY").getSql(),
+						new SqlParameterValue(Types.VARCHAR, (new StringBuilder()).append(baseKey).append("%").toString()),
+						new SqlParameterValue(Types.VARCHAR, (new StringBuilder()).append(localeCode).append("%").toString()));
 
 			} else {
 				getExtendedJdbcTemplate().update(getBoundSql("ARCHITECTURE_FRAMEWORK.DELETE_PROPERTY").getSql(),
-						new Object[] { (new StringBuilder()).append(name).append(".%").toString() },
-						new int[] { Types.VARCHAR });
+						new SqlParameterValue(Types.VARCHAR, name));
+				getExtendedJdbcTemplate().update(getBoundSql("ARCHITECTURE_FRAMEWORK.DELETE_PROPERTY").getSql(),
+						new SqlParameterValue(Types.VARCHAR, (new StringBuilder()).append(name).append(".%").toString()));
 			}
 		}
 	}
@@ -287,11 +293,13 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 				String localeCode = StringUtils.substringAfterLast(name, ".");
 				getExtendedJdbcTemplate().update(
 						getBoundSql("ARCHITECTURE_FRAMEWORK.UPDATE_LOCALIZED_PROPERTY").getSql(),
-						new Object[] { value, baseKey, localeCode },
-						new int[] { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR });
+						new SqlParameterValue(Types.VARCHAR, value),
+						new SqlParameterValue(Types.VARCHAR, baseKey),
+						new SqlParameterValue(Types.VARCHAR, localeCode));
 			} else {
 				getExtendedJdbcTemplate().update(getBoundSql("ARCHITECTURE_FRAMEWORK.UPDATE_PROPERTY").getSql(),
-						new Object[] { value, name }, new int[] { Types.VARCHAR, Types.VARCHAR });
+						new SqlParameterValue(Types.VARCHAR, value),
+						new SqlParameterValue(Types.VARCHAR, name));
 			}
 		}
 	}
@@ -309,8 +317,7 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 									throws SQLException, DataAccessException {
 								Map<String, String> map = new HashMap<String, String>();
 								while (rs.next()) {
-									String name = (new StringBuilder()).append(rs.getString(1)).append(".")
-											.append(rs.getString(3)).toString();
+									String name = (new StringBuilder()).append(rs.getString(1)).append(".").append(rs.getString(3)).toString();
 									String value = rs.getString(2);
 									// 오라클인경우에 문제가 발생되기 때문이다.
 									if (value.equals(" "))
@@ -323,10 +330,8 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 			} else {
 				rs = getExtendedJdbcTemplate().query(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_ALL_PROPERTY").getSql(),
 						new ResultSetExtractor<Map<String, String>>() {
-							public Map<String, String> extractData(ResultSet rs)
-									throws SQLException, DataAccessException {
+							public Map<String, String> extractData(ResultSet rs) throws SQLException, DataAccessException {
 								Map<String, String> map = new HashMap<String, String>();
-
 								while (rs.next()) {
 									String name = rs.getString(1);
 									String value = rs.getString(2);
@@ -351,8 +356,9 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 		ArrayList<Locale> list = new ArrayList<Locale>();
 		if (getJdbcTemplate() != null) {
 			List<String> locales = getExtendedJdbcTemplate().queryForList(
-					getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_LOCALES").getSql(), new Object[] { name },
-					new int[] { Types.VARCHAR }, String.class);
+					getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_LOCALES").getSql(), 
+					String.class,
+					new SqlParameterValue(Types.VARCHAR, name));
 			for (String localeCode : locales) {
 				list.add(LocaleUtils.localeCodeToLocale(localeCode));
 			}
