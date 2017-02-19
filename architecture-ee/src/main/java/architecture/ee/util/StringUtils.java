@@ -22,6 +22,9 @@ import architecture.ee.service.VariableMap;
 
 public class StringUtils extends org.springframework.util.StringUtils {
 
+	public static final int INDEX_NOT_FOUND = -1;
+	public static final String EMPTY = "";
+	
 	public static String defaultString(final String str, final String defaultStr) {
 		return str == null ? defaultStr : str;
 	}
@@ -34,4 +37,30 @@ public class StringUtils extends org.springframework.util.StringUtils {
 	public static boolean isNullOrEmpty(String str) {
 		return com.google.common.base.Strings.isNullOrEmpty(str);
 	}
+	
+	public static String substringBeforeLast(final String str, final String separator) {
+		if (isEmpty(str) || isEmpty(separator)) {
+			return str;
+		}
+		final int pos = str.lastIndexOf(separator);
+		if (pos == INDEX_NOT_FOUND) {
+			return str;
+		}
+		return str.substring(0, pos);
+	}
+	
+	 public static String substringAfterLast(final String str, final String separator) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		if (isEmpty(separator)) {
+			return EMPTY;
+		}
+		final int pos = str.lastIndexOf(separator);
+		if (pos == INDEX_NOT_FOUND || pos == str.length() - separator.length()) {
+			return EMPTY;
+		}
+		return str.substring(pos + separator.length());
+	} 
+		 
 }

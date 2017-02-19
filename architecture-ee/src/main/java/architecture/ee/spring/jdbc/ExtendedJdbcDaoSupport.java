@@ -46,6 +46,10 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		this.sqlConfiguration = sqlConfiguration;
 	}
 
+	public void setSqlConfiguration(Configuration sqlConfiguration) {
+		this.sqlConfiguration = sqlConfiguration;
+	}
+
 	/**
 	 * Create a ExtendedJdbcTemplate for the given DataSource. Only invoked if
 	 * populating the DAO with a DataSource reference!

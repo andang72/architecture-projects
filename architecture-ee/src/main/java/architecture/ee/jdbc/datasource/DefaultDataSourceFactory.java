@@ -22,12 +22,13 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.util.Assert;
 
 import architecture.ee.exception.RuntimeError;
-import architecture.ee.service.AdminService;
 import architecture.ee.service.ApplicationProperties;
+import architecture.ee.service.Repository;
 
 /**
  * startup-config.xml 에 database 
@@ -38,8 +39,8 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 	
 	private Logger log = LoggerFactory.getLogger(this.getClass());
 	
-	@Autowired( required = true )
-	private AdminService adminService;
+	@Autowired( required = true) @Qualifier("repository")
+	private Repository repository;
 	
 	
 	private String profileName ;	
@@ -48,7 +49,7 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 		
 		String profileTag = "database." + profileName ;		
 		
-		ApplicationProperties config = adminService.getRepository().getSetupApplicationProperties();		
+		ApplicationProperties config = repository.getSetupApplicationProperties();		
 		Collection<String> dataSourceProviders = config.getChildrenNames(profileTag);				
 		
 		log.debug("searching database profile '{}' in {}." , profileName,  dataSourceProviders );		

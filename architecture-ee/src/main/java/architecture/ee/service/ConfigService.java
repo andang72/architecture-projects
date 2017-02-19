@@ -17,6 +17,7 @@ package architecture.ee.service;
 
 import java.util.List;
 import java.util.Map;
+
 /**
  * 
  * @author donghyuck
@@ -30,9 +31,9 @@ public interface ConfigService {
 	 * @return
 	 */
 	public String getLocalProperty(String name);
-	
+
 	public int getLocalProperty(String name, int defaultValue);
-	
+
 	/**
 	 * 자식에 해당하는 프로퍼티 값들을 리턴한다.
 	 * 
@@ -40,26 +41,48 @@ public interface ConfigService {
 	 * @return
 	 */
 	public List<String> getLocalProperties(String parent);
-	
-	
+
 	/**
-	 * 프로퍼티 값을 설정 한다. 
+	 * 프로퍼티 값을 설정 한다.
+	 * 
 	 * @param name
 	 * @param value
 	 */
 	public void setLocalProperty(String name, String value);
-	
+
 	/**
-	 * 한번에 여러 프로퍼티 값들을 저장한다. 
+	 * 한번에 여러 프로퍼티 값들을 저장한다.
 	 * 
 	 * @param propertyMap
 	 */
-	public void setLocalProperties(Map<String,String> propertyMap);
-	
+	public void setLocalProperties(Map<String, String> propertyMap);
+
 	/**
 	 * name 에 해당하는 프로퍼티를 삭제한다.
+	 * 
 	 * @param name
 	 */
 	public void deleteLocalProperty(String name);
 
+	public String getApplicationProperty(String name);
+
+	public String getApplicationProperty(String name, String defaultValue);
+
+	public List<String> getApplicationPropertyNames();
+
+	public List<String> getApplicationPropertyNames(String parent);
+
+	public List<String> getApplicationProperties(String parent);
+
+	public int getApplicationIntProperty(String name, int defaultValue);
+
+	public boolean getApplicationBooleanProperty(String name);
+
+	public boolean getApplicationBooleanProperty(String name, boolean defaultValue);
+
+	public void setApplicationProperty(String name, String defaultValue);
+
+	public void setApplicationProperties(Map<String, String> map);
+
+	public void deleteApplicationProperty(String name);
 }
