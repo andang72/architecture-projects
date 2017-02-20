@@ -15,8 +15,6 @@
  */
 package tests;
 
-import java.util.List;
-
 import javax.sql.DataSource;
 
 import org.junit.Test;
@@ -25,16 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import architecture.ee.jdbc.sqlquery.factory.Configuration;
+import architecture.ee.jdbc.sqlquery.SqlQuery;
 import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
-import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
-import architecture.ee.spring.jdbc.ExtendedJdbcDaoSupport;
-import architecture.ee.spring.jdbc.ExtendedJdbcTemplate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration("WebContent/")
@@ -47,11 +41,6 @@ public class SqlQueryTest {
 	@Qualifier("sqlQueryFactory")
     private SqlQueryFactory sqlQueryFactory;
 	
-	
-	@Autowired
-	@Qualifier("sqlConfiguration")
-    private Configuration sqlConfiguration;
-	
 	@Autowired
 	@Qualifier("dataSource")
     private DataSource dataSource;
@@ -59,41 +48,21 @@ public class SqlQueryTest {
 	@Test
 	public void testJdbcTemplate1(){		
 		
-		ExtendedJdbcTemplate template = new ExtendedJdbcTemplate(dataSource);		
-		MappedStatement ms = sqlQueryFactory.getConfiguration().getMappedStatement("COMMON.SELECT_TABLE_NAMES");		
-		List<String> list = template.queryForList(ms.getBoundSql(null).getSql(), String.class);
-		log.debug( list.size() + " >>>>>>>>>> " + list ) ;
+		SqlQuery sqlQuery = sqlQueryFactory.createSqlQuery(dataSource);
+		sqlQuery.setMaxResults(15);
+		
+		log.debug("LIST 1: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES", String.class ) );
+		
+		log.debug("LIST 2: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES", 15, 15, String.class) );
+		
 
-	}
-	
-	@Test
-	public void testJdbcTemplate2(){		
-		log.debug( ">>>>>>>>>>" ) ;
-		ExtendedJdbcTemplate template = new ExtendedJdbcTemplate(dataSource);
-		try {
-			List list = template.query("select table_name from tabs", 0, 15);
-			log.debug( list.size() + " >>>>>>>>>> " + list ) ;
-		} catch (DataAccessException e) {
-			e.printStackTrace();
-		}
-	}
+		log.debug("LIST 3: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES" ) );
 		
-	@Test
-	public void testJdbcTemplate3(){				
-		ExtendedJdbcTemplate template = new ExtendedJdbcTemplate(dataSource);
-		log.debug( template.getDBInfo().toString() ) ;
-	}
-	
-	
-	@Test
-	public void testJdbcDao(){			
-		log.debug( ">>>>>>>>>> testJdbcDao" ) ;
-		ExtendedJdbcDaoSupport template = new ExtendedJdbcDaoSupport(sqlConfiguration);
-		template.setDataSource(dataSource);
-		log.debug( "RESULT: {}",
-				template.getExtendedJdbcTemplate().queryForList(template.getBoundSql("COMMON.SELECT_TABLE_NAMES").getSql() )
-		);
+		log.debug("LIST 4: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES", 15, 15 ) );
+		
+		log.debug("OBJECT 1: {}" , sqlQuery.queryForObject("COMMON.SELECT_TABLE_NAME", "ORI_TEMP" ) );
 		
 	}
+	
 	
 }

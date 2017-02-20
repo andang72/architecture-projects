@@ -19,4 +19,19 @@ public class ApplicationConstants {
 
 	public static final String DEFAULT_STARTUP_FILENAME = "startup-config.xml";
 	
+	public static final String SETUP_COMPLETE_PROP_NAME = "setup.complete";
+	
+	
+	public static final String DEFAULT_CHAR_ENCODING = "UTF-8";
+	
+	/** LOCALE PROPERTY KEY */
+    public static final String LOCALE_LANGUAGE_PROP_NAME = "locale.language";
+    public static final String LOCALE_COUNTRY_PROP_NAME = "locale.country";
+    public static final String LOCALE_CHARACTER_ENCODING_PROP_NAME = "locale.characterEncoding";
+    public static final String LOCALE_TIMEZONE_PROP_NAME = "locale.timeZone";
+
+    /** LICENSE PROPERTY KEY */
+    public static final String RESOURCE_LICENSE_LOCATION_PROP_NAME = "license.location";
+
+	
 }

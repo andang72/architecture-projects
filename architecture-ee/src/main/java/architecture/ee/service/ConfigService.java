@@ -15,8 +15,11 @@
  */
 package architecture.ee.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * 
@@ -24,6 +27,22 @@ import java.util.Map;
  *
  */
 public interface ConfigService extends EventTarget {
+	
+	public boolean isSetupComplete();
+	
+	public Locale getLocale();
+	
+	public void setLocale(Locale newLocale);
+	
+	public String getCharacterEncoding() ;
+	
+	public void setCharacterEncoding(String characterEncoding) throws UnsupportedEncodingException;
+	
+	public TimeZone getTimeZone() ;
+	
+	public void setTimeZone(TimeZone newTimeZone);
+	
+	
 	/**
 	 * startup-config.xml 파일에 저장된 프로퍼티 값을 리턴한다.
 	 * 
@@ -32,6 +51,9 @@ public interface ConfigService extends EventTarget {
 	 */
 	public String getLocalProperty(String name);
 
+	public String getLocalProperty(String name, String defaultValue) ;
+	
+	
 	public int getLocalProperty(String name, int defaultValue);
 
 	/**

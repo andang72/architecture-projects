@@ -25,12 +25,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
-import org.springframework.jdbc.object.SqlQuery;
 
 import com.google.common.eventbus.EventBus;
 
 import architecture.ee.component.State;
 import architecture.ee.component.event.StateChangeEvent;
+import architecture.ee.jdbc.sqlquery.SqlQuery;
 import architecture.ee.jdbc.sqlquery.builder.BuilderException;
 import architecture.ee.jdbc.sqlquery.builder.xml.XmlSqlSetBuilder;
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
@@ -49,9 +49,7 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 	
 	public SqlQueryFactoryImpl(Configuration configuration) {
 		this.configuration = configuration;
-	}
-
-	
+	}	
 	
 	protected void buildFromResourceLocations() {
 		DefaultResourceLoader loader = new DefaultResourceLoader();
@@ -72,8 +70,9 @@ public class SqlQueryFactoryImpl implements SqlQueryFactory {
 	
 
 	public SqlQuery createSqlQuery(DataSource dataSource) {
-
-		return null;
+		SqlQueryImpl impl = new SqlQueryImpl(configuration);
+		impl.setDataSource(dataSource);
+		return impl;
 
 	}
 

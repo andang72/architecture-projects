@@ -169,7 +169,12 @@ public class ExtendedJdbcTemplate extends JdbcTemplate {
     // Public Methods for Update and Batch
     // *********************************************
 
-	
+	public  <T> List<T> query( String sql, int startIndex, int numResults, Class<T> elementType, Object... args) throws DataAccessException {			
+		return query(
+			new ScrollablePreparedStatementCreator(getDBInfo(), sql, startIndex, numResults ), 
+			newArgPreparedStatementSetter(args), 
+			new ScrollableResultSetExtractor<T>(getDBInfo(), getSingleColumnRowMapper(elementType), startIndex, numResults));
+	}
 	
 	
 	public  List<Map<String, Object>> query( String sql, int startIndex, int numResults, Object... args) throws DataAccessException {			

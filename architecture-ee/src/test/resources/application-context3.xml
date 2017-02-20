@@ -14,28 +14,34 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
                                 
-     <beans:bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" p:corePoolSize="5" p:maxPoolSize="10" p:queueCapacity="25" />
+<beans:bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" p:corePoolSize="5" p:maxPoolSize="10" p:queueCapacity="25" />
                                     
      <beans:bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus">
      	<beans:constructor-arg index="0" ref="taskExecutor" />
      </beans:bean>              
-     
-     <beans:bean id="adminService" class="architecture.ee.component.AdminServiceImpl" ></beans:bean>
-          
+               
      <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" ></beans:bean>
      
- 	 <beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
+     <beans:bean id="dataSource" class="architecture.ee.spring.jdbc.datasource.DataSourceFactoryBean" p:profileName="default" lazy-init="true"/>
+     
+     <beans:bean id="configService" class="architecture.ee.component.ConfigServiceImpl" init-method="initialize" />
+     
+     <beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
      	<beans:property name="resourceLocations">
-     		<beans:list/>
+     		<beans:list>
+     			<value>sql/default-framework-sqlset.xml</value>     			
+     		</beans:list>
      	</beans:property>
      </beans:bean>
      
      <bean id="sqlConfiguration" factory-bean="sqlQueryFactory" factory-method="getConfiguration" />
+          
+     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" depends-on="dataSource" p:dataSource-ref="dataSource" />	
+	
+     <tx:annotation-driven transaction-manager="transactionManager"/>     
      
      <beans:bean id="sqlQueryDirectoryScanner" class="architecture.ee.jdbc.sqlquery.scanner.DirectoryScanner" p:sqlQueryFactory-ref="sqlQueryFactory" depends-on="sqlQueryFactory" init-method="initialize" destroy-method="destroy">
      	<beans:property name="directory" value="${services.sql.location}"></beans:property>
      </beans:bean>
-
-	<beans:bean id="dataSource" class="architecture.ee.spring.jdbc.datasource.DataSourceFactoryBean" p:profileName="default" lazy-init="true"/>
                   
 </beans:beans> 

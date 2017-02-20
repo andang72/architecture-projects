@@ -19,7 +19,6 @@ import architecture.ee.jdbc.sqlquery.factory.impl.SqlQueryFactoryImpl;
 
 public class SqlQueryFactoryBuilder {
 
-	
 	public static SqlQueryFactory build() {
 		Configuration config = new Configuration();
 	    return new SqlQueryFactoryImpl(config);
@@ -28,6 +27,5 @@ public class SqlQueryFactoryBuilder {
 	public static SqlQueryFactory build(Configuration config) {
 	    return new SqlQueryFactoryImpl(config);
 	}
-	
 	
 }

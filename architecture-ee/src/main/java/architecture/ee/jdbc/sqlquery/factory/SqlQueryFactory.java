@@ -17,8 +17,7 @@
 package architecture.ee.jdbc.sqlquery.factory;
 
 import javax.sql.DataSource;
-
-import org.springframework.jdbc.object.SqlQuery;
+import architecture.ee.jdbc.sqlquery.SqlQuery;
 
 public interface SqlQueryFactory {
 
