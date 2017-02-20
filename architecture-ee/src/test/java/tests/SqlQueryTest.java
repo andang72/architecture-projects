@@ -54,7 +54,6 @@ public class SqlQueryTest {
 		log.debug("LIST 1: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES", String.class ) );
 		
 		log.debug("LIST 2: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES", 15, 15, String.class) );
-		
 
 		log.debug("LIST 3: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES" ) );
 		

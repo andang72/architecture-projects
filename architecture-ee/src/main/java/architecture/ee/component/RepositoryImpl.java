@@ -36,6 +36,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.support.ServletContextResource;
 
+import architecture.ee.i18n.CommonLogLocalizer;
 import architecture.ee.service.ApplicationProperties;
 import architecture.ee.service.ConfigRoot;
 import architecture.ee.service.Repository;
@@ -63,10 +64,9 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 	public ConfigRoot getConfigRoot() {
 		try {
 			File file = new File( getRootResource().getFile() , "config" );
-			Resource child = new FileSystemResource(file);
-			
-			log.debug("config exists : " + child.exists());
-			
+			log.debug(CommonLogLocalizer.format( "003010",  file.getPath() ));			
+			Resource child = new FileSystemResource(file);			
+			log.debug(CommonLogLocalizer.format( "003005",  child.exists() ));
 			return new ConfigRootImpl(child);
 		} catch (Exception e) {
 			return null;
@@ -92,11 +92,12 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 		if (setupProperties == null) {
 			if(initailized.get()){
 				
-				File file = getFile(ApplicationConstants.DEFAULT_STARTUP_FILENAME);				
+				File file = getFile(ApplicationConstants.DEFAULT_STARTUP_FILENAME);						
+						
 				if (!file.exists()){					
 					boolean error = false;
 				    // create default file...
-				    log.debug("No startup file now create !!! {}", file.getAbsolutePath());
+				    log.debug(CommonLogLocalizer.format("003012", file.getAbsolutePath()));
 				    Writer writer = null;
 				    try {
 				    	
@@ -175,10 +176,10 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 				    }	
 				}else{
 					try {
-						log.debug("load from {}", file.getAbsolutePath() );
+						log.debug(CommonLogLocalizer.format("003011", file.getPath()));		
 						this.setupProperties = new LocalApplicationProperties(file);
 					} catch (IOException e) {
-						 log.error("error" , e);
+						 log.error(CommonLogLocalizer.getMessage("003013") , e);
 					}
 				}
 			}else{
@@ -189,30 +190,30 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 	}
 
 	public void initialize(){
-		state = State.INITIALIZING;
-		
+		state = State.INITIALIZING;		
 		if(initailized.get()) {			
-			log.debug("initialized");
-		}
-		
+			log.debug(CommonLogLocalizer.getMessage("003003"));
+		}		
 		state = State.INITIALIZED;
 	}
 	
 	public void setServletContext(ServletContext servletContext) {
 		if (!initailized.get()) {
 			ServletContextResource resource = new ServletContextResource(servletContext, "/WEB-INF");
+			
+			log.debug( CommonLogLocalizer.format( "003006", resource.getPath() ));
 			try {
 				File file = resource.getFile();
-				log.debug("repository exists : " + file.exists());
+				log.debug(CommonLogLocalizer.format( "003005",  file.exists() ));
 				if( !file.exists() )		
 				{
 					
 				}
 				rootResource = new FileSystemResource(file);
-				log.debug("repository initialize with : " + rootResource.toString());
+				log.debug(CommonLogLocalizer.format( "003007",  rootResource.toString() ));				
 				initailized.set(true);
 			} catch (IOException e) {
-				log.error("faile to .. ", e);
+				log.error(CommonLogLocalizer.getMessage("003008"), e);
 			}			
 		}
 	}
