@@ -117,6 +117,7 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						// setup end
 						
 						// license start
+						root.addComment("LICENSE SETTING");
 						org.dom4j.Element licenseNode = root.addElement("license");
 						// license end
 						
@@ -132,32 +133,53 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 						*/
 						// view end
 						
-						// security start						
+						// security start			
+						root.addComment("SECURITY SETTING");
 						org.dom4j.Element securityNode = root.addElement("security");
 						org.dom4j.Element encrpptNode = securityNode.addElement("encrypt");
-						encrpptNode.addElement("algorithm").setText("Blowfish");;
+						encrpptNode.addElement("algorithm").setText("Blowfish");
 						encrpptNode.addElement("key").addElement("current");
 						org.dom4j.Element encrpptPropertyNode = encrpptNode.addElement("property");
 						encrpptPropertyNode.addElement("name").setText("username");
 						encrpptPropertyNode.addElement("name").setText("password");						
 						securityNode.addElement("authentication").addElement("encoding").addElement("algorithm").setText("SHA-256");
 						// security end
-						// scripting start
-	
-						/**
-						org.dom4j.Element scriptingNode = root.addElement("scripting");
-						org.dom4j.Element groovyNode = scriptingNode.addElement("groovy");
-						groovyNode.addElement("debug").setText("false");
-						org.dom4j.Element sourceGroovyNode = groovyNode.addElement("source");
-						sourceGroovyNode.addElement("location");
-						sourceGroovyNode.addElement("encoding").setText(ApplicationConstants.DEFAULT_CHAR_ENCODING);
-						sourceGroovyNode.addElement("recompile").setText("true");
-						*/
-						// scripting end
+						// services start
+						root.addComment("SERVICES SETTING");
+						org.dom4j.Element servicesNode = root.addElement("services");
+						servicesNode.addElement("sql").addElement("location").addText("sql");
+						// services end
+						
 						// database start
-						
-						org.dom4j.Element databaseNode = root.addElement("database").addElement("default");
-						
+						root.addComment("DATABASE SETTING");
+						org.dom4j.Element databaseNode = root.addElement("database");
+						org.dom4j.Element databaseDefaultNode = databaseNode.addElement("default");
+						databaseDefaultNode.addComment(" 1. jndi datasource ");
+						databaseDefaultNode.addComment((new StringBuilder()).append("\n")
+						.append("      ").append("<jndiDataSourceProvider>").append("\n")
+						.append("      ").append("	<jndiName></jndiName>").append("\n")
+						.append("      ").append("</jndiDataSourceProvider>").append("\n")
+						.toString()); 
+						databaseDefaultNode.addComment(" 2. connection pool datasource using dbcp ");
+						databaseDefaultNode.addComment((new StringBuilder()).append("\n")
+						.append("      ").append("<pooledDataSourceProvider> ").append("\n")
+						.append("      ").append("    <driverClassName></driverClassName> ").append("\n")
+						.append("      ").append("    <url></url>").append("\n")
+						.append("      ").append("    <username></username>").append("\n")
+						.append("      ").append("    <password></password>").append("\n")
+						.append("      ").append("    <connectionProperties>").append("\n") 
+						.append("      ").append("        <initialSize>1</initialSize>").append("\n")
+						.append("      ").append("        <maxActive>8</maxActive>").append("\n")
+						.append("      ").append("        <maxIdle>8</maxIdle>").append("\n")
+						.append("      ").append("        <maxWait>-1</maxWait>").append("\n") 
+						.append("      ").append("        <minIdle>0</minIdle>").append("\n")
+						.append("      ").append("        <testOnBorrow>true</testOnBorrow>").append("\n")
+						.append("      ").append("        <testOnReturn>false</testOnReturn>").append("\n")
+						.append("      ").append("        <testWhileIdle>false</testWhileIdle>").append("\n")
+						.append("      ").append("        <validationQuery>select 1 from dual</validationQuery>").append("\n")  
+						.append("      ").append("    </connectionProperties>").append("\n") 
+						.append("      ").append("</pooledDataSourceProvider>") 
+						.toString());  
 						// database end
 						xmlWriter.write(document);
 					    } catch (Exception e) {

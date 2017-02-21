@@ -27,6 +27,7 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.util.Assert;
 
 import architecture.ee.exception.RuntimeError;
+import architecture.ee.i18n.CommonLogLocalizer;
 import architecture.ee.service.ApplicationProperties;
 import architecture.ee.service.Repository;
 
@@ -52,30 +53,31 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 		ApplicationProperties config = repository.getSetupApplicationProperties();		
 		Collection<String> dataSourceProviders = config.getChildrenNames(profileTag);				
 		
-		log.debug("searching database profile '{}' in {}." , profileName,  dataSourceProviders );		
+		log.debug(CommonLogLocalizer.format("003040", profileName));		
 	
 		if( dataSourceProviders.size() == 0 )
-			throw new RuntimeError("No connection provider for [" + profileName + "]");
+			throw new RuntimeError(CommonLogLocalizer.format("003041", profileName));
 		
 		for( String dataSourceProvider : dataSourceProviders ){
 			String providerTag = profileTag + "." + dataSourceProvider	;	
 			if("jndiDataSourceProvider".equals(dataSourceProvider))
 			{
 				String jndiNameTag = providerTag + ".jndiName";				
-				String jndiName = config.get( jndiNameTag + ".jndiName");				
-				Assert.hasText(jndiName, "Property 'jndiName' must not be empty");		
+				String jndiName = config.get( jndiNameTag + ".jndiName");		
+				
+				Assert.hasText(jndiName, CommonLogLocalizer.getMessage("003042"));		
 				
 				JndiDataSourceLookup lookup = new JndiDataSourceLookup();
 				return lookup.getDataSource(jndiName);
 				
 			}else if ("pooledDataSourceProvider".equals(dataSourceProvider)){
-				
+
 				String driverClassName = config.get(providerTag + ".driverClassName");
 			    String url = config.get(providerTag + ".url");
 			    String username = config.get(providerTag + ".username");
 			    String password = config.get(providerTag + ".password");
 			    
-			    log.debug("pooledDataSourceProvider - driverClassName : {} , url : {} ", driverClassName, url);
+			    log.debug(CommonLogLocalizer.format("003043", driverClassName, url));
 			    
 			    org.apache.commons.dbcp.BasicDataSource dbcp = new org.apache.commons.dbcp.BasicDataSource();
 			    
@@ -86,9 +88,7 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 			    String propertiesTag = providerTag + ".connectionProperties";			    
 			    for(String name : config.getChildrenNames(propertiesTag) ){
 			    	String value = config.get( propertiesTag + "." + name );
-			    	
-			    	log.debug("{} property {}:{}", dataSourceProvider, name , value );
-			    	
+			    	log.debug(CommonLogLocalizer.format("003044", name, value));
 			    	dbcp.addConnectionProperty(name, value);
 			    }			    
 			    return dbcp;
