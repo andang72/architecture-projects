@@ -213,10 +213,12 @@ public class RepositoryImpl implements Repository, ServletContextAware {
 
 	public void initialize(){
 		state = State.INITIALIZING;		
+		log.debug(CommonLogLocalizer.format("003001", "Repository",state.name() ));
 		if(initailized.get()) {			
 			log.debug(CommonLogLocalizer.getMessage("003003"));
 		}		
 		state = State.INITIALIZED;
+		log.debug(CommonLogLocalizer.format("003001", "Repository",state.name() ));
 	}
 	
 	public void setServletContext(ServletContext servletContext) {

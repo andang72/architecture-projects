@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.eventbus.EventBus;
 
 import architecture.ee.exception.ConfigurationError;
+import architecture.ee.i18n.CommonLogLocalizer;
 import architecture.ee.service.ApplicationProperties;
 import architecture.ee.service.ConfigService;
 import architecture.ee.service.Repository;
@@ -78,15 +79,14 @@ public class ConfigServiceImpl implements ConfigService {
     
 	public void initialize() {
 		state = State.INITIALIZING;
-		
+		logger.debug(CommonLogLocalizer.format("003001", "ConfigService",state.name() ));
 		boolean isSetDataSource = dataSource != null ? true : false ;
-		logger.debug("initialized with datasource : {} ", isSetDataSource );
 		if( isSetDataSource )
 		{
 			getApplicationProperties();
-		}
-		
+		}		
 		state = State.INITIALIZED;
+		logger.debug(CommonLogLocalizer.format("003001", "ConfigService",state.name() ));
 	}
 
 	private ApplicationProperties getApplicationProperties() {
@@ -105,10 +105,11 @@ public class ConfigServiceImpl implements ConfigService {
 
 	private ApplicationProperties newApplicationProperties(boolean localized) {
 
+		// 
 		DataSource dataSourceToUse = this.dataSource;
 		// 데이터베이스 설정이 완료되지 않았다면 널을 리턴한다.
 		if (dataSourceToUse != null) {
-			logger.debug("Loading properties from database.");
+			logger.debug(CommonLogLocalizer.getMessage("003014"));
 			try {
 				JdbcApplicationProperties impl = new JdbcApplicationProperties(localized);
 				impl.setSqlConfiguration(sqlConfiguration);
@@ -119,7 +120,7 @@ public class ConfigServiceImpl implements ConfigService {
 				impl.setDataSource(dataSourceToUse);
 				impl.afterPropertiesSet();
 				
-				logger.debug("Jdbc properties loaded : {}", impl.getPropertyNames() );
+				logger.debug(CommonLogLocalizer.format("003015", StringUtils.collectionToCommaDelimitedString(impl.getPropertyNames()) ) );
 				
 				return impl;
 				
@@ -344,7 +345,6 @@ public class ConfigServiceImpl implements ConfigService {
 			eventBus.register(listener);
 	}
 
-	@Override
 	public void unregisterEventListener(Object listener) {
 		if( eventBus != null)
 			eventBus.unregister(listener);
