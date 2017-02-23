@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>architecture</groupId>
+	<artifactId>architecture-community</artifactId>
+	<version>1.0.0-RELEASE</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<javac.src.version>1.6</javac.src.version>
+		<javac.target.version>1.6</javac.target.version>
+		<project.javadoc.docEncoding>UTF-8</project.javadoc.docEncoding>
+		<project.build.version>1.0.0-RELEASE</project.build.version>
+		<javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
+	</properties>
+  
+</project>  
+  
