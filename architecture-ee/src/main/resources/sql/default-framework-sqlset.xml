@@ -4,7 +4,7 @@
     <version>2.0</version>
     <description>SQL for FRAMEWOR</description>
 	<!-- ============================================== -->
-	<!-- V2_LOCALIZED_PROPERTY              			-->
+	<!-- MUSI_LOCALIZED_PROPERTY              			-->
 	<!-- ============================================== -->
 	<sql-query name="SELECT_ALL_LOCALIZED_PROPERTY" description="전체 다국어 지원 프로퍼티 값"><![CDATA[
 	SELECT 
