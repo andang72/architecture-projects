@@ -34,7 +34,6 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 	@Qualifier("sqlConfiguration")
     private Configuration sqlConfiguration;
 	
-	
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	public ExtendedJdbcDaoSupport() {

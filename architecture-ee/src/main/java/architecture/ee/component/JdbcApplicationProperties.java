@@ -54,7 +54,7 @@ public class JdbcApplicationProperties extends ExtendedJdbcDaoSupport implements
 	private boolean localized;
 
 	private ConcurrentMap<String, String> properties;
-
+	
 	protected JdbcApplicationProperties(boolean localized) {
 		this.localized = localized;
 	}
