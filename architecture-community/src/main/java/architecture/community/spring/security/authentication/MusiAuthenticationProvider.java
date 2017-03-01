@@ -1,4 +1,4 @@
-package architecture.community.security.authentication;
+package architecture.community.spring.security.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

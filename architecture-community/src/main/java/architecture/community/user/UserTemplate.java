@@ -3,48 +3,67 @@ package architecture.community.user;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.util.StringUtils;
+
 public class UserTemplate implements User, Serializable {
-		
+
 	public static final User ANONYMOUS = new UserTemplate(-1L, "ANONYMOUS");
-	
+
 	private long userId;
-	
+
 	private String username;
-	
+
 	private String name;
-	
+
 	private Status status;
-	
+
 	private String email;
-	
+
 	private String firstName;
-	
+
 	private String lastName;
-	
+
 	private String password;
-	
+
 	private String passwordHash;
-	
+
 	private boolean enabled;
-	
+
 	private boolean nameVisible;
-	
+
 	private boolean emailVisible;
-	
+
 	private Date creationDate;
-	
+
 	private Date modifiedDate;
-	
+
+	public UserTemplate(User user) {
+		if (null == user)
+			return;
+		userId = user.getUserId();
+		username = user.getUsername();
+		name = user.getName();
+		email = user.getEmail();
+		nameVisible = user.isNameVisible();
+		emailVisible = user.isEmailVisible();
+		creationDate = user.getCreationDate();
+		modifiedDate = user.getModifiedDate();
+		status = user.getStatus();
+		password = user.getPassword();
+		passwordHash = user.getPasswordHash();
+		status = Status.NONE;
+	}
+
 	public UserTemplate() {
 		userId = -2L;
 		status = Status.NONE;
 	}
 
-	public UserTemplate(String username){
+	public UserTemplate(String username) {
 		this.userId = -2L;
 		this.username = username;
 	}
-	
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
@@ -61,11 +80,10 @@ public class UserTemplate implements User, Serializable {
 		this.modifiedDate = modifiedDate;
 	}
 
-	public UserTemplate(long userId){
+	public UserTemplate(long userId) {
 		this.userId = userId;
 	}
-	
-	
+
 	public UserTemplate(long userId, String username) {
 		this.userId = userId;
 		this.username = username;
@@ -88,11 +106,32 @@ public class UserTemplate implements User, Serializable {
 	}
 
 	public String getName() {
-		return name;
+		if (lastName != null && firstName != null) {
+			StringBuilder builder = new StringBuilder(firstName);
+			builder.append(" ").append(lastName);
+			return builder.toString();
+		} else {
+			return name;
+		}
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		if (lastName != null && firstName != null && name != null) {
+			name = name.trim();
+			int index = name.indexOf(" ");
+			if (index > -1) {
+				firstName = name.substring(0, index);
+				lastName = name.substring(index + 1, name.length());
+				lastName = lastName.trim();
+				this.name = null;
+			} else {
+				firstName = null;
+				lastName = null;
+				this.name = name;
+			}
+		} else {
+			this.name = name;
+		}
 	}
 
 	public Status getStatus() {
@@ -166,12 +205,12 @@ public class UserTemplate implements User, Serializable {
 	public void setEmailVisible(boolean emailVisible) {
 		this.emailVisible = emailVisible;
 	}
-	
+
 	public boolean isAnonymous() {
-		if( this.userId == -1L )
+		if (this.userId == -1L)
 			return true;
-		else 
+		else
 			return false;
 	}
-	
+
 }

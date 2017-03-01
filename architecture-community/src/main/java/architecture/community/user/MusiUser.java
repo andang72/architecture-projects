@@ -122,5 +122,11 @@ public class MusiUser implements User {
 	public void setEmailVisible(boolean emailVisible) {
 		this.emailVisible = emailVisible;
 	}
-	public boolean isAnonymous() {return false;}
+	
+	public boolean isAnonymous() {
+		if( userId > 0)
+			return false;
+		else 
+			return true;
+	}
 }

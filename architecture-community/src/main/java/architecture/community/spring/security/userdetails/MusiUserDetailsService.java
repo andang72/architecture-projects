@@ -1,4 +1,4 @@
-package architecture.community.security.userdetails;
+package architecture.community.spring.security.userdetails;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

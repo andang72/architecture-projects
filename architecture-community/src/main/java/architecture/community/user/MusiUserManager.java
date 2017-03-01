@@ -82,7 +82,7 @@ public class MusiUserManager implements UserManager {
 		
 		if (null == user && StringUtils.isNullOrEmpty(template.getEmail()) ) {
 		    try {
-		    	user = userDao.getUserByNameOrEmail(template.getEmail());
+		    	user = userDao.getUserByEmail(template.getEmail());
 		    	updateCaches(user);
 		    }
 		    catch (Exception ex) {

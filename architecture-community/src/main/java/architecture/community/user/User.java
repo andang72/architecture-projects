@@ -1,5 +1,7 @@
 package architecture.community.user;
 
+import java.util.Date;
+
 public interface User {
 
 	enum Status {
@@ -49,8 +51,14 @@ public interface User {
 
 	public String getPassword();
 	
+	public String getPasswordHash();
+	
 	public boolean isAnonymous() ;
 	
 	public String getEmail();
+	
+	public Date getCreationDate();
+	
+	public Date getModifiedDate();
 	
 }
