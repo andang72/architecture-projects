@@ -1,5 +1,7 @@
 package architecture.community.user;
 
+import java.util.Date;
+
 public class MusiUser implements User {
 
 	private long userId;
@@ -128,5 +130,17 @@ public class MusiUser implements User {
 			return false;
 		else 
 			return true;
+	}
+
+	@Override
+	public Date getCreationDate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

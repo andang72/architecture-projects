@@ -10,4 +10,6 @@ public interface UserManager {
 	
 	public User getUser(long userId) throws UserNotFoundException;
 	
+	public User createUser(User newUser) throws UserAlreadyExistsException, EmailAlreadyExistsException;
+	
 }

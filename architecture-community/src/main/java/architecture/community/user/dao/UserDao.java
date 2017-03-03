@@ -12,4 +12,6 @@ public interface UserDao {
 	
 	public abstract User getUserByEmail(String email);
 	
+	public abstract long getNextUserId();
+	
 }

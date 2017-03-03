@@ -136,7 +136,6 @@ public class MusiUserManager implements UserManager {
 			return userCache.get(userId);			
 		return null;
 	}
-
 	
 	private String getPasswordHash(User user) {
 		String passwd;
@@ -148,6 +147,12 @@ public class MusiUserManager implements UserManager {
 		} catch (Exception ex) {			
 			log.warn(CommunityLogLocalizer.getMessage("010001"), ex);
 		}		
+		return null;
+	}
+
+	@Override
+	public User createUser(User newUser) throws UserAlreadyExistsException, EmailAlreadyExistsException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -20,16 +20,23 @@ import org.springframework.stereotype.Repository;
 import architecture.community.i18n.CommunityLogLocalizer;
 import architecture.community.user.User;
 import architecture.community.user.UserTemplate;
+import architecture.ee.jdbc.sequencer.SequencerFactory;
+import architecture.ee.jdbc.sequencer.annotation.MaxValue;
 import architecture.ee.service.ConfigService;
 import architecture.ee.spring.jdbc.ExtendedJdbcDaoSupport;
 import architecture.ee.util.StringUtils;
 
 @Repository("userDao")
+@MaxValue("USER")
 public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 
 	@Inject
 	@Qualifier("configService")
 	private ConfigService configService;
+	
+	@Inject
+	@Qualifier("sequencerFactory")
+	private SequencerFactory sequencerFactory;
 
 	private final RowMapper<UserTemplate> userMapper = new RowMapper<UserTemplate>() {
 
@@ -54,6 +61,10 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 
 	public JdbcUserDao() {
 		super();
+	}
+	
+	public long getNextUserId(){
+		return sequencerFactory.getNextValue(this);
 	}
 
 	public User getUserById(long userId) {
