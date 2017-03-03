@@ -36,7 +36,7 @@
     ]]></sql-query>
     
 	<!-- ============================================== -->
-	<!-- V2_PROPERTY                                                                    -->
+	<!-- V2_PROPERTY                                    -->
 	<!-- ============================================== -->
 	<sql-query name="SELECT_ALL_PROPERTY" description="전체  프로퍼티 값"><![CDATA[
 	SELECT 
@@ -63,4 +63,50 @@
 	WHERE PROPERTY_NAME=?
     ]]></sql-query>  
 
+	<!-- ============================================== -->
+	<!-- V2_SEQUENCER                                   -->
+	<!-- ============================================== -->
+	<sql-query name="SELECT_ALL_SEQUENCER"><![CDATA[
+	SELECT 
+	    SEQUENCER_ID, 
+	    NAME, 
+	    VALUE 
+	FROM MUSI_SEQUENCER
+    ]]></sql-query>
+
+	<sql-query name="SELECT_SEQUENCER_BY_NAME"><![CDATA[
+	SELECT 
+	    SEQUENCER_ID, 
+	    NAME, 
+	    VALUE 
+	FROM MUSI_SEQUENCER
+	WHERE NAME = ?
+    ]]></sql-query>
+    
+	<sql-query name="SELECT_SEQUENCER_BY_ID"><![CDATA[
+	SELECT 
+	    VALUE 	
+	FROM MUSI_SEQUENCER 
+	WHERE SEQUENCER_ID = ?
+    ]]></sql-query>
+
+	<sql-query name="UPDATE_SEQUENCER"><![CDATA[
+	UPDATE 
+	    MUSI_SEQUENCER SET VALUE = ? 
+	WHERE SEQUENCER_ID = ? AND VALUE = ?
+    ]]></sql-query>
+
+	<sql-query name="SELECT_SEQUENCER_MAX_ID"><![CDATA[
+	SELECT 
+	    MAX ( SEQUENCER_ID ) + 1 
+	FROM MUSI_SEQUENCER 
+    ]]></sql-query>
+
+	<sql-query name="CREATE_SEQUENCER" ><![CDATA[
+	INSERT INTO MUSI_SEQUENCER (
+	    VALUE, 
+	    NAME, 
+	    SEQUENCER_ID 
+	) VALUES (?, ?, ?)
+    ]]></sql-query>
 </sqlset>
