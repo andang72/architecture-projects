@@ -12,9 +12,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.google.common.eventbus.Subscribe;
 
-import architecture.ee.component.State;
 import architecture.ee.component.event.StateChangeEvent;
-import architecture.ee.service.AdminService;
 import architecture.ee.service.Repository;
 
 /**
@@ -44,26 +42,12 @@ public class RepositoryTest {
 	
 	@Autowired
     private Repository repository;
-	
-	@Autowired
-    private AdminService adminService;
-	
+
 	@Test
 	public void testRepository(){
 		log.debug("repository config path : {}", repository.getFile("config"));
 		log.debug("startup properties : {}", repository.getSetupApplicationProperties());		
 	}
-	
-	@Test 
-	public void test01(){
-		adminService.registerEventListener(new StateChangeEventListener());				
-	}
-	
-	@Test
-	public void test02(){
-		adminService.fireStateChangeEvent("REPOSITORY", State.NONE, State.STARTING );
-	}
-	
 	class StateChangeEventListener {
 		
 		@Subscribe 
