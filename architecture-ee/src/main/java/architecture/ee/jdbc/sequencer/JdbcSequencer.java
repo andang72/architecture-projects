@@ -30,6 +30,7 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 
+import architecture.ee.i18n.CommonLogLocalizer;
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
 import architecture.ee.jdbc.sqlquery.mapping.BoundSql;
 import architecture.ee.jdbc.sqlquery.mapping.MappedStatement;
@@ -72,7 +73,7 @@ public class JdbcSequencer implements Sequencer {
         maxId = 0l;
         this.name = name;
         if( StringUtils.isNullOrEmpty( name ))
-        	throw new IllegalArgumentException("Sequencer name can not be null or empty.");        
+        	throw new IllegalArgumentException(CommonLogLocalizer.getMessage("003101"));        
     }
     
     
@@ -129,7 +130,7 @@ public class JdbcSequencer implements Sequencer {
      */
     private void getNextBlock(int count) {
         if (count == 0) {
-            logger.error("Failed at last attempt to obtain an ID, aborting...");
+            logger.error(CommonLogLocalizer.getMessage("003102"));
             return;
         }
 
@@ -192,7 +193,7 @@ public class JdbcSequencer implements Sequencer {
         }
         catch (SQLException e) {
             logger.error(e.getMessage(), e);
-            throw new DataAccessResourceFailureException("Could not increment identity", e);
+            throw new DataAccessResourceFailureException(CommonLogLocalizer.getMessage("003103"), e);
         }
         finally {
             JdbcUtils.closeResultSet(rs);
@@ -201,8 +202,7 @@ public class JdbcSequencer implements Sequencer {
         }
 
         if (!success) {
-            logger.warn("WARNING: failed to obtain next ID block due to " +
-                    "thread contention. Trying again...");
+            logger.warn(CommonLogLocalizer.getMessage("003104"));
             // Call this method again, but sleep briefly to try to avoid thread contention.
             try {
                 Thread.sleep(75);
@@ -216,7 +216,7 @@ public class JdbcSequencer implements Sequencer {
 
     private void createNewID(Connection con, int type) throws SQLException {
     	
-        logger.warn("Autocreating Sequencer row for type '" + type + "' and name '" + name + "'");
+        logger.warn(CommonLogLocalizer.format("003105", type, name));
 
         // create new ID row
         PreparedStatement pstmt = null;

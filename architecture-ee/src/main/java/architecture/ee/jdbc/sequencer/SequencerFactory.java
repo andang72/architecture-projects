@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import architecture.ee.i18n.CommonLogLocalizer;
 import architecture.ee.jdbc.sequencer.annotation.MaxValue;
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
 import architecture.ee.service.ConfigService;
@@ -67,12 +68,14 @@ public class SequencerFactory {
 
 	public long getNextValue(String name) {
 		if( StringUtils.isNullOrEmpty( name ))
-			throw new IllegalArgumentException("Sequencer name can not be null or empty.");
+			throw new IllegalArgumentException(CommonLogLocalizer.getMessage("003101"));
 		
 		if (sequencersByName.containsKey(name)) {
 			return sequencersByName.get(name).getNextValue();
 		} else {
-			logger.debug("create new sequencer with " + name );
+			
+			logger.debug(CommonLogLocalizer.format("003105", null, name));
+			
 			int blockSize = 1 ;
 			if(configService!=null)
 				blockSize = configService.getLocalProperty("services.sequencer.blockSize", blockSize);
@@ -92,7 +95,8 @@ public class SequencerFactory {
 			// Verify type is valid from the db, if so create an instance for
 			// the type
 			// And return the next unique id
-			logger.debug("create new sequencer with " + type );
+			logger.debug(CommonLogLocalizer.format("003105", type, null));
+			
 			int blockSize = 1 ;
 			if(configService!=null)
 				blockSize = configService.getLocalProperty("services.sequencer.blockSize", blockSize);
@@ -109,8 +113,9 @@ public class SequencerFactory {
 	public long getNextValue(Object object) {
 		MaxValue id = object.getClass().getAnnotation(MaxValue.class);
 		if (id == null) {
-			logger.error("Annotation MaxValue must be defined in the class " + object.getClass());
-			throw new IllegalArgumentException("Annotation MaxValue must be defined in the class " + object.getClass());
+			String msg = CommonLogLocalizer.format("003106", object.getClass());
+			logger.error(msg);
+			throw new IllegalArgumentException(msg);
 		}
 		return getNextValue(id.value());
 	}
