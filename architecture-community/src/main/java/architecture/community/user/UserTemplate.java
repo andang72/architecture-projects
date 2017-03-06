@@ -3,11 +3,14 @@ package architecture.community.user;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.springframework.util.StringUtils;
+import architecture.community.i18n.CommunityLogLocalizer;
+import architecture.ee.util.StringUtils;
 
 public class UserTemplate implements User, Serializable {
 
+	
 	public static final User ANONYMOUS = new UserTemplate(-1L, "ANONYMOUS");
+	
 
 	private long userId;
 
@@ -36,11 +39,31 @@ public class UserTemplate implements User, Serializable {
 	private Date creationDate;
 
 	private Date modifiedDate;
+	
+	public UserTemplate(String username, String password, String name, boolean nameVisible, String email,  boolean emailVisible) {
+		
+		this.userId = -2L;
+		if(StringUtils.isNullOrEmpty(username))
+			throw new NullPointerException(CommunityLogLocalizer.getMessage("010015"));
+		
+		this.username = username;
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.enabled = true;
+		this.nameVisible = nameVisible;
+		this.emailVisible = emailVisible;
+		enabled = true;
+	}
 
 	public UserTemplate(User user) {
 		if (null == user)
 			return;
 		userId = user.getUserId();
+		
+		if(StringUtils.isNullOrEmpty(user.getUsername()))
+			throw new NullPointerException(CommunityLogLocalizer.getMessage("010015"));
+		
 		username = user.getUsername();
 		name = user.getName();
 		email = user.getEmail();
@@ -51,6 +74,7 @@ public class UserTemplate implements User, Serializable {
 		status = user.getStatus();
 		password = user.getPassword();
 		passwordHash = user.getPasswordHash();
+		enabled = true;
 		status = Status.NONE;
 	}
 
@@ -211,6 +235,11 @@ public class UserTemplate implements User, Serializable {
 			return true;
 		else
 			return false;
+	}
+
+	@Override
+	public String toString() {
+		return "UserTemplate [userId=" + userId + ", username=" + username + "]";
 	}
 
 }

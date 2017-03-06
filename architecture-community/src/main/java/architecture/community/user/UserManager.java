@@ -12,4 +12,6 @@ public interface UserManager {
 	
 	public User createUser(User newUser) throws UserAlreadyExistsException, EmailAlreadyExistsException;
 	
+	public void deleteUser(User user) throws UserNotFoundException ;
+	
 }

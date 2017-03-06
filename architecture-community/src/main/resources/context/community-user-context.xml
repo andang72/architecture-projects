@@ -12,8 +12,14 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	
+	<beans:bean id="userManager" class="architecture.community.user.MusiUserManager"  />		
+		
 	<beans:bean id="userDao" class="architecture.community.user.dao.JdbcUserDao" p:dataSource-ref="dataSource" ></beans:bean>
 	
+	<beans:bean id="userIdCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" p:cacheName="userIdCache"  p:maxElementsInMemory="5000" p:diskPersistent="false"  p:overflowToDisk="false" p:timeToIdle="30" p:timeToLive="60"  p:eternal="false"  p:diskExpiryThreadIntervalSeconds="0" p:statisticsEnabled="true"  />
+	
+	<beans:bean id="userCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" p:cacheName="userCache"  p:maxElementsInMemory="5000"  p:diskPersistent="false" p:overflowToDisk="false"  p:timeToIdle="30"  p:timeToLive="60" p:eternal="false"  p:diskExpiryThreadIntervalSeconds="0"  p:statisticsEnabled="true" />
+		
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></beans:bean>
     
     

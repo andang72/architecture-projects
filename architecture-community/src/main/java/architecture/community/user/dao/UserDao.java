@@ -4,7 +4,7 @@ import architecture.community.user.User;
 
 public interface UserDao {
 	
-	public abstract User create(User template);
+	public abstract User createUser(User template);
 
 	public abstract User getUserById(long userId);
 		
@@ -13,5 +13,7 @@ public interface UserDao {
 	public abstract User getUserByEmail(String email);
 	
 	public abstract long getNextUserId();
+	
+	public abstract void deleteUser(User user);
 	
 }

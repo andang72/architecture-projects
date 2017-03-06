@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.ui.ModelMap;
@@ -19,7 +21,8 @@ import architecture.ee.util.StringUtils;
 
 public class MusiAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
 		if (ServletUtils.isAcceptJson(request)) {
@@ -32,15 +35,14 @@ public class MusiAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 			Map<String, Object> model = new ModelMap();
 			model.put("item", result);
 			
-			//MappingJackson2JsonView view = new MappingJackson2JsonView();
-			//view.setExtractValueFromSingleKeyModel(true);
-			//view.setModelKey("item");
+			MappingJackson2JsonView view = new MappingJackson2JsonView();
+			view.setExtractValueFromSingleKeyModel(true);
+			view.setModelKey("item");
 			try {
 				createJsonView().render(model, request, response);
 			} catch (Exception e) {
 
-			}
-			//userService.loginEvent(request, SecurityHelper.getUser());			
+			}		
 			return;
 		}
 

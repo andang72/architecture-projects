@@ -5,37 +5,64 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import architecture.community.user.dao.UserDao;
-import architecture.ee.jdbc.sequencer.SequencerFactory;
+import architecture.community.user.User;
+import architecture.community.user.UserManager;
+import architecture.community.user.UserNotFoundException;
+import architecture.community.user.UserTemplate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration("WebContent/")
-@ContextConfiguration(locations={"classpath:application-user-context.xml"})
+@ContextConfiguration(locations = { "classpath:application-user-context.xml" })
 public class UserManagerTest {
 
 	@Autowired
-    private UserDao userDao;
-	
+	private UserManager userManager;
+
 	private static Logger log = LoggerFactory.getLogger(UserManagerTest.class);
 
 	@Test
-	public void testUserDaoById(){
-		log.debug("" + userDao.getUserById(1));
+	public void testUserDaoById() {
+		try {
+			log.debug("USER" + userManager.getUser(1));
+		} catch (UserNotFoundException e) {
+			log.error("ERROR" , e);
+		}
+	}
+
+	@Test
+	public void testUserDaoByUsername() {
+		try {
+			log.debug("USER" + userManager.getUser("test"));
+		} catch (UserNotFoundException e) {
+			log.error("ERROR" , e);
+		}
+	}
+
+	@Test
+	public void testCreateUserIfNotExist() {
+		User newUesr = new UserTemplate("king", "1234", "킹", false, "king@king.com", false);
+		log.debug("---------------" + newUesr);
+		User existUser = userManager.getUser(newUesr);
+		log.debug("USER:" + existUser );
+		
+		if( existUser != null){
+			log.debug("now remove : " + existUser );
+			try {
+				userManager.deleteUser(newUesr);
+			} catch (UserNotFoundException e) {
+				log.error("ERROR", e );
+			}	
+		}
+		try {
+			userManager.createUser(newUesr);
+		} catch (Exception e) {
+			log.error("ERROR" , e);
+		}
+		log.debug(newUesr.toString());
 	}
 	
-	@Test
-	public void testUserDaoByUsername(){
-		log.debug(">>>>>>>>>>>." + userDao.getUserByUsername("test") );
-	}
-	
-	@Test
-	public void testGetNextUserId(){
-		for( int i = 0 ; i < 10 ; i ++ )
-			log.debug("next user id : " + userDao.getNextUserId() );
-	}
 }

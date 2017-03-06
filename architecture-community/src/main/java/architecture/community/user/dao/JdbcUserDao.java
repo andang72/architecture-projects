@@ -129,17 +129,23 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 		return username;
 	}
 
-	public User create(User user) {
+	public User createUser(User user) {
 		UserTemplate template = new UserTemplate(user);
 		if (template.getEmail() == null)
 			throw new IllegalArgumentException(CommunityLogLocalizer.getMessage("010012"));		
-		long nextUserId = 0 ;
+		
+		
+		long nextUserId = getNextUserId() ;
+				
 		if ("".equals(template.getName()))
 			template.setName(null);
+		
 		template.setEmail(template.getEmail().toLowerCase());
 		if (template.getStatus() == null || template.getStatus() == User.Status.NONE)
 			template.setStatus(User.Status.REGISTERED);
+		
 		boolean useLastNameFirstName = !StringUtils.isNullOrEmpty(template.getFirstName()) && !StringUtils.isNullOrEmpty(template.getLastName());
+		
 		try {
 			Date now = new Date();
 			getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY.CREATE_USER").getSql(),
@@ -177,6 +183,10 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 			logger.error(CommunityLogLocalizer.getMessage("010004"), e);
 		}
 		return user;
+	}
+
+	public void deleteUser(User user) {
+		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY.DELETE_USER_BY_ID").getSql(), new SqlParameterValue(Types.NUMERIC, user.getUserId()));		
 	}
 
 }

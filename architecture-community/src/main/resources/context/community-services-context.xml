@@ -23,7 +23,7 @@
      <beans:bean id="dataSource" class="architecture.ee.spring.jdbc.datasource.DataSourceFactoryBean" p:profileName="default" lazy-init="true"/>
      
      <beans:bean id="configService" class="architecture.ee.component.ConfigServiceImpl" init-method="initialize" />
-     
+               
      <beans:bean id="sqlQueryFactory" class="architecture.ee.jdbc.sqlquery.factory.SqlQueryFactoryBuilder" init-method="initialize" factory-method="build" >
      	<beans:property name="resourceLocations">
      		<beans:list>
@@ -39,5 +39,8 @@
      <bean id="sqlConfiguration" factory-bean="sqlQueryFactory" factory-method="getConfiguration" />
      
      <bean id="sequencerFactory" class="architecture.ee.jdbc.sequencer.SequencerFactory.Builder" factory-method="build" />
+     
+     <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:shared="false" p:cacheManagerName="ehCacheManager"/>
+     
           
 </beans:beans> 
