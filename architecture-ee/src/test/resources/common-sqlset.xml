@@ -71,7 +71,6 @@
 		<parameterMapping name="description" column="DESCRIPTION" javaType="string" />
 		<parameterMapping name="creationDate" column="CREATION_DATE" javaType="date" />
 		<parameterMapping name="modifiedDate" column="MODIFIED_DATE" javaType="date" />
-			
     </row-mapper>
 
 	<sql-query name="SELECT_ALL_FROM_TABLE" description="테이블 데이터 조회">       

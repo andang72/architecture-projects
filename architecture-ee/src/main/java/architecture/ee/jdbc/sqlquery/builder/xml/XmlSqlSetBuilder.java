@@ -69,6 +69,32 @@ public class XmlSqlSetBuilder extends AbstractBuilder {
 		this.parser = parser;
 	}
 	
+	public void parse() {
+		try {
+			if (!configuration.isResourceLoaded(resource)) {				
+				configuration.addLoadedResource(resource);
+			}			
+			XNode context = parser.evalNode("/sqlset");
+			configurationElement(context);				
+			buildStatement(context.evalNodes("/sqlset/sql-query"));
+			buildRowMapper(context.evalNodes("/sqlset/row-mapper"));				
+			
+		} catch (Exception e) {
+
+		}
+	}
+	
+	private void buildRowMapper(List<XNode> list){
+		for (XNode context : list) {
+			final XmlRowMapperBuilder mapperParser = new XmlRowMapperBuilder(configuration, builderAssistant, context);
+			try{
+				mapperParser.parseRowMapperNode();				
+			}catch(Exception e){
+				// 오류 발생시에 대한 처리 로직 요구됨.
+			}
+		}		
+	}
+	
 	private void buildStatement(List<XNode> list){
 		for (XNode context : list) {
 			final XmlStatementBuilder statementParser = new XmlStatementBuilder(configuration, builderAssistant, context);
@@ -113,20 +139,7 @@ public class XmlSqlSetBuilder extends AbstractBuilder {
 		logger.debug("BUILD SQL Name={}, Namespace={}, Version={}, Description={}", name, namespace, desctiption, version);
 	}
 	
-	public void parse() {
-		try {
-			if (!configuration.isResourceLoaded(resource)) {				
-				configuration.addLoadedResource(resource);
-			}			
-			XNode context = parser.evalNode("/sqlset");
-			configurationElement(context);				
-			buildStatement(context.evalNodes("/sqlset/sql-query"));
-			//rowMapperElement(context.evalNodes("/sqlset/row-mapper"));				
-			
-		} catch (Exception e) {
 
-		}
-	}
 	
 	private void rowMapperElement(List<XNode> list) throws Exception {
 		String currentNamespace = builderAssistant.getCurrentNamespace();
