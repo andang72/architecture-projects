@@ -29,6 +29,8 @@ public class MusiAuthenticationProvider extends DaoAuthenticationProvider {
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
+		logger.debug("=========== credentials  = {}" , authentication.getCredentials());
+		
 		if (authentication.getCredentials() == null)
 		    throw new BadCredentialsException("Bad credentials");
 		

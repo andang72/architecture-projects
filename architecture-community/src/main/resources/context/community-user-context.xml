@@ -11,7 +11,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	
+	<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:shared="false" p:cacheManagerName="ehCacheManager"/>
+     
 	<beans:bean id="userManager" class="architecture.community.user.MusiUserManager"  />		
 		
 	<beans:bean id="userDao" class="architecture.community.user.dao.JdbcUserDao" p:dataSource-ref="dataSource" ></beans:bean>

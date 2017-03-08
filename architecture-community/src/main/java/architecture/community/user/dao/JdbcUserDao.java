@@ -73,7 +73,7 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 		}
 		UserTemplate user = null;
 		try {
-			user = getExtendedJdbcTemplate().queryForObject(getBoundSql("COMMUNITY.SELECT_USER_BY_ID").getSql(),
+			user = getExtendedJdbcTemplate().queryForObject(getBoundSql("COMMUNITY_USER.SELECT_USER_BY_ID").getSql(),
 					userMapper, new SqlParameterValue(Types.NUMERIC, userId));
 		} catch (IncorrectResultSizeDataAccessException e) {
 			if (e.getActualSize() > 1) {
@@ -93,7 +93,7 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 		UserTemplate usertemplate = null;
 		try {
 			UserTemplate user = getExtendedJdbcTemplate().queryForObject(
-					getBoundSql("COMMUNITY.SELECT_USER_BY_EMAIL").getSql(), userMapper,
+					getBoundSql("COMMUNITY_USER.SELECT_USER_BY_EMAIL").getSql(), userMapper,
 					new SqlParameterValue(Types.VARCHAR, emailMatch));
 
 		} catch (IncorrectResultSizeDataAccessException e) {
@@ -148,7 +148,7 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 		
 		try {
 			Date now = new Date();
-			getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY.CREATE_USER").getSql(),
+			getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.CREATE_USER").getSql(),
 					new SqlParameterValue(Types.NUMERIC, nextUserId),
 					new SqlParameterValue(Types.VARCHAR, template.getUsername()),
 					new SqlParameterValue(Types.VARCHAR, template.getPasswordHash()),
@@ -175,7 +175,7 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 			return null;
 		UserTemplate user = null;
 		try {
-			user = getExtendedJdbcTemplate().queryForObject(getBoundSql("COMMUNITY.SELECT_USER_BY_USERNAME").getSql(),
+			user = getExtendedJdbcTemplate().queryForObject(getBoundSql("COMMUNITY_USER.SELECT_USER_BY_USERNAME").getSql(),
 					userMapper, new SqlParameterValue(Types.VARCHAR, username));
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(CommunityLogLocalizer.format("010009", username), e);
@@ -186,7 +186,7 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 	}
 
 	public void deleteUser(User user) {
-		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY.DELETE_USER_BY_ID").getSql(), new SqlParameterValue(Types.NUMERIC, user.getUserId()));		
+		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.DELETE_USER_BY_ID").getSql(), new SqlParameterValue(Types.NUMERIC, user.getUserId()));		
 	}
 
 }

@@ -39,8 +39,5 @@
      <bean id="sqlConfiguration" factory-bean="sqlQueryFactory" factory-method="getConfiguration" />
      
      <bean id="sequencerFactory" class="architecture.ee.jdbc.sequencer.SequencerFactory.Builder" factory-method="build" />
-     
-     <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:shared="false" p:cacheManagerName="ehCacheManager"/>
-     
-          
+               
 </beans:beans> 

@@ -13,13 +13,17 @@
 
 
 	<import resource="classpath:context/community-bootstrap-context.xml"/>	
-	<import resource="classpath:context/community-services-context.xml"/>
+	<import resource="classpath:context/community-components-context.xml"/>
 	<import resource="classpath:context/community-transaction-context.xml"/>
 	<import resource="classpath:context/community-user-context.xml"/>
+	<import resource="classpath:context/community-security-context.xml"/>
 	
 	<!-- to activate annotations in beans already registered in the application  context -->
+	
 	<context:annotation-config />
+	
 	<!-- scans packages to find and register beans within the application context -->
+	
 	<context:component-scan base-package="architecture.community" />
 
 </beans:beans> 
