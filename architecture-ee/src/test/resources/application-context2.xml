@@ -20,7 +20,6 @@
      	<beans:constructor-arg index="0" ref="taskExecutor" />
      </beans:bean>              
      
-     <beans:bean id="adminService" class="architecture.ee.component.AdminServiceImpl" ></beans:bean>
           
      <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" ></beans:bean>
      

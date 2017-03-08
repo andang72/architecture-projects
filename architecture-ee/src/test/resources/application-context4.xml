@@ -19,8 +19,6 @@
      <beans:bean id="eventBus" class="com.google.common.eventbus.AsyncEventBus">
      	<beans:constructor-arg index="0" ref="taskExecutor" />
      </beans:bean>              
-     
-     <beans:bean id="adminService" class="architecture.ee.component.AdminServiceImpl" ></beans:bean>
           
      <beans:bean id="repository" class="architecture.ee.component.RepositoryImpl" ></beans:bean>
      

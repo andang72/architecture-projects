@@ -35,7 +35,7 @@ import architecture.ee.jdbc.sqlquery.factory.SqlQueryFactory;
 @ContextConfiguration(locations={"classpath:application-context3.xml"})
 public class SqlQueryTest {
 
-	private static Logger log = LoggerFactory.getLogger(SqlQueryXmlTest.class);
+	private static Logger log = LoggerFactory.getLogger(SqlQueryTest.class);
 	
 	@Autowired
 	@Qualifier("sqlQueryFactory")
@@ -59,7 +59,11 @@ public class SqlQueryTest {
 		
 		log.debug("LIST 4: {}" , sqlQuery.queryForList("COMMON.SELECT_TABLE_NAMES", 15, 15 ) );
 		
-		log.debug("OBJECT 1: {}" , sqlQuery.queryForObject("COMMON.SELECT_TABLE_NAME", "ORI_TEMP" ) );
+		try {
+			log.debug("OBJECT 1: {}" , sqlQuery.queryForObject("COMMON.SELECT_TABLE_NAME", "ORI_TEMP" ) );
+		} catch (Exception e) {
+			log.error("",e);
+		}
 		
 	}
 	
