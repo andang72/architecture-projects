@@ -98,7 +98,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${project.dependency.spring.version}</version>
-			<scope>test, provided</scope>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
