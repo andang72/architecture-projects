@@ -1,7 +1,5 @@
 package architecture.community.spring.security.authentication;
 
-import java.util.Date;
-
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -13,11 +11,11 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import architecture.community.spring.security.userdetails.MusiUserDetails;
+import architecture.community.i18n.CommunityLogLocalizer;
+import architecture.community.spring.security.userdetails.CommuintyUserDetails;
 import architecture.community.user.UserManager;
-import architecture.community.user.UserTemplate;
 
-public class MusiAuthenticationProvider extends DaoAuthenticationProvider {
+public class CommunityAuthenticationProvider extends DaoAuthenticationProvider {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -29,28 +27,15 @@ public class MusiAuthenticationProvider extends DaoAuthenticationProvider {
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
-		logger.debug("=========== credentials  = {}" , authentication.getCredentials());
-		
 		if (authentication.getCredentials() == null)
-		    throw new BadCredentialsException("Bad credentials");
+		    throw new BadCredentialsException(CommunityLogLocalizer.getMessage("010101"));
 		
 		super.additionalAuthenticationChecks(userDetails, authentication);
 
 		try {
-			// do something for login success ...
-			
-			MusiUserDetails user = (MusiUserDetails) userDetails;
-			try {
-			    if ( user.getUser() != null) {
-			    	UserTemplate template = new UserTemplate(user.getUser());
-			    	//template.setLastLoggedIn(new Date());
-			    	//userManager.updateUser(template);
-			    }
-			} catch (Exception e) {
-			    //log.warn(L10NUtils.format("005016", user), e);
-			}
+			CommuintyUserDetails user = (CommuintyUserDetails) userDetails;
 		} catch (Exception e) {
-		    logger.error("Unable to coerce user detail to MusiUserDetails.");
+		    logger.error(CommunityLogLocalizer.getMessage("010102"), e);
 		    throw new BadCredentialsException( messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 		}		
 	}

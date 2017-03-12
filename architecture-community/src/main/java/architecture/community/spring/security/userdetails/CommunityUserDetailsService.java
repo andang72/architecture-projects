@@ -21,7 +21,7 @@ import architecture.community.util.CommunityConstants;
 import architecture.ee.service.ConfigService;
 import architecture.ee.spring.event.EventSupport;
 import architecture.ee.util.StringUtils;
-public class MusiUserDetailsService implements UserDetailsService {
+public class CommunityUserDetailsService implements UserDetailsService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -38,7 +38,7 @@ public class MusiUserDetailsService implements UserDetailsService {
 			User user = userManager.getUser(username);
 
 			
-			MusiUserDetails details = new MusiUserDetails(user, getFinalUserAuthority(user));
+			CommuintyUserDetails details = new CommuintyUserDetails(user, getFinalUserAuthority(user));
 			
 			return details ;			
 		} catch (UserNotFoundException e) {

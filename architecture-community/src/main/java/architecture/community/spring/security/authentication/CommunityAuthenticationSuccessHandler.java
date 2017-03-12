@@ -19,7 +19,7 @@ import architecture.community.web.model.json.Result;
 import architecture.community.web.util.ServletUtils;
 import architecture.ee.util.StringUtils;
 
-public class MusiAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class CommunityAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	

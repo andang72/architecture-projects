@@ -14,17 +14,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author donghyuck
  *
  */
-public class MusiUserDetails extends User {
+public class CommuintyUserDetails extends User {
 
 	@JsonIgnore
 	private final architecture.community.user.User communityUser;
 
-	public MusiUserDetails(architecture.community.user.User communityUser) {
+	public CommuintyUserDetails(architecture.community.user.User communityUser) {
 		super(communityUser.getUsername(), communityUser.getPassword(), communityUser.isEnabled(), true, true, true, AuthorityUtils.NO_AUTHORITIES);
 		this.communityUser = communityUser;
 	}
 
-	public MusiUserDetails(architecture.community.user.User communityUser, List<GrantedAuthority> authorities) {
+	public CommuintyUserDetails(architecture.community.user.User communityUser, List<GrantedAuthority> authorities) {
 		super(communityUser.getUsername(), communityUser.getPassword(), communityUser.isEnabled(), true, true, true, authorities);
 		this.communityUser = communityUser;
 	}

@@ -53,11 +53,11 @@
 	</authentication-manager>
 
 	
-	<beans:bean id="authenticationProvider" class="architecture.community.spring.security.authentication.MusiAuthenticationProvider"  p:passwordEncoder-ref="passwordEncoder" p:userDetailsService-ref="userDetailsService"/>
+	<beans:bean id="authenticationProvider" class="architecture.community.spring.security.authentication.CommunityAuthenticationProvider"  p:passwordEncoder-ref="passwordEncoder" p:userDetailsService-ref="userDetailsService"/>
 	
-	<beans:bean id="authenticationSuccessHandler" class="architecture.community.spring.security.authentication.MusiAuthenticationSuccessHandler"/>
+	<beans:bean id="authenticationSuccessHandler" class="architecture.community.spring.security.authentication.CommunityAuthenticationSuccessHandler"/>
 			
-	<beans:bean id="userDetailsService" class="architecture.community.spring.security.userdetails.MusiUserDetailsService" ></beans:bean>
+	<beans:bean id="userDetailsService" class="architecture.community.spring.security.userdetails.CommunityUserDetailsService" ></beans:bean>
 	
 	
 </beans:beans> 

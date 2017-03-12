@@ -9,9 +9,6 @@ import architecture.ee.util.StringUtils;
 public class UserTemplate implements User, Serializable {
 
 	
-	public static final User ANONYMOUS = new UserTemplate(-1L, "ANONYMOUS");
-	
-
 	private long userId;
 
 	private String username;

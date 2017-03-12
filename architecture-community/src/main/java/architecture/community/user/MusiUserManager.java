@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import architecture.community.i18n.CommunityLogLocalizer;
 import architecture.community.user.dao.UserDao;
 import architecture.community.user.event.UserRemovedEvent;
+import architecture.community.util.SecurityHelper;
 import architecture.ee.spring.event.EventSupport;
 import architecture.ee.util.StringUtils;
 import net.sf.ehcache.Cache;
@@ -55,7 +56,7 @@ public class MusiUserManager extends EventSupport implements UserManager {
 		User user = null;
 
 		if (template.getUserId() == -1L) {
-			return UserTemplate.ANONYMOUS;
+			return SecurityHelper.ANONYMOUS;
 		}
 
 		if (template.getUserId() > 0L) {
