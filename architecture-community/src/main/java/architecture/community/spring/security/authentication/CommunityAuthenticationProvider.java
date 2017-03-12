@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,9 +12,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.google.common.eventbus.EventBus;
+
 import architecture.community.i18n.CommunityLogLocalizer;
 import architecture.community.spring.security.userdetails.CommuintyUserDetails;
 import architecture.community.user.UserManager;
+import architecture.community.user.event.UserActivityEvent;
 
 public class CommunityAuthenticationProvider extends DaoAuthenticationProvider {
 	
@@ -23,7 +27,11 @@ public class CommunityAuthenticationProvider extends DaoAuthenticationProvider {
 	@Qualifier("userManager")
 	private UserManager userManager;	
 	
-
+	@Autowired(required = false)
+	@Qualifier("eventBus")
+	private EventBus eventBus;
+	
+	
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
@@ -34,9 +42,13 @@ public class CommunityAuthenticationProvider extends DaoAuthenticationProvider {
 
 		try {
 			CommuintyUserDetails user = (CommuintyUserDetails) userDetails;
+			if(eventBus!=null){
+				eventBus.post(new UserActivityEvent(this, user.getUser(), UserActivityEvent.ACTIVITY.SIGNIN ));
+			}
 		} catch (Exception e) {
 		    logger.error(CommunityLogLocalizer.getMessage("010102"), e);
 		    throw new BadCredentialsException( messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
 		}		
 	}
+	
 }

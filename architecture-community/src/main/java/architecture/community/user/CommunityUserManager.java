@@ -163,7 +163,7 @@ public class CommunityUserManager extends EventSupport implements UserManager {
 		try {
 			userDao.deleteUser(existUser);
 			evictCaches(user);
-			fireEvent(new UserRemovedEvent( this, user));
+			fireEvent(new UserRemovedEvent(this, user));
 		} catch (DataAccessException ex) {
 			String message = CommunityLogLocalizer.format("010016", user);
 			log.error(message, ex);
