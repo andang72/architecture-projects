@@ -44,7 +44,7 @@ public class JdbcUserDao extends ExtendedJdbcDaoSupport implements UserDao {
 			UserTemplate ut = new UserTemplate();
 			ut.setUserId(rs.getLong("USER_ID"));
 			ut.setUsername(rs.getString("USERNAME"));
-			ut.setPasswordHash(rs.getString("PASSWORD_HASH"));
+			ut.setPassword(rs.getString("PASSWORD_HASH"));
 			ut.setName(rs.getString("NAME"));
 			ut.setNameVisible(rs.getInt("NAME_VISIBLE") == 1);
 			ut.setFirstName(rs.getString("FIRST_NAME"));

@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import architecture.community.user.User;
 import architecture.community.user.UserManager;
 import architecture.community.user.UserNotFoundException;
-import architecture.community.web.util.CommunityConstants;
+import architecture.community.util.CommunityConstants;
 import architecture.ee.service.ConfigService;
 import architecture.ee.spring.event.EventSupport;
 import architecture.ee.util.StringUtils;
@@ -36,7 +36,10 @@ public class MusiUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {			
 			User user = userManager.getUser(username);
+
+			
 			MusiUserDetails details = new MusiUserDetails(user, getFinalUserAuthority(user));
+			
 			return details ;			
 		} catch (UserNotFoundException e) {
 			throw new UsernameNotFoundException("User not found.", e);	
@@ -47,7 +50,7 @@ public class MusiUserDetailsService implements UserDetailsService {
 		
 		String authority = configService.getLocalProperty(CommunityConstants.SECURITY_AUTHENTICATION_AUTHORITY_PROP_NAME);
 		List<String> roles = new ArrayList<String>();		
-		if( StringUtils.isNullOrEmpty( authority ))
+		if(! StringUtils.isNullOrEmpty( authority ))
 		{
 			authority = authority.trim();
 		    if (!roles.contains(authority)) {

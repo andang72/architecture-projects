@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 public class Result implements java.io.Serializable {
 
+	
 	private Error error;
 	private boolean anonymous;
 	private Integer count = 0;
