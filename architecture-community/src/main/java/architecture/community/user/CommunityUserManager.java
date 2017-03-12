@@ -21,9 +21,9 @@ import architecture.ee.util.StringUtils;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
-public class MusiUserManager extends EventSupport implements UserManager {
+public class CommunityUserManager extends EventSupport implements UserManager {
 
-	private static final Logger log = LoggerFactory.getLogger(MusiUserManager.class);
+	private static final Logger log = LoggerFactory.getLogger(CommunityUserManager.class);
 
 	@Inject
 	@Qualifier("userDao")
@@ -43,7 +43,7 @@ public class MusiUserManager extends EventSupport implements UserManager {
 
 	private boolean emailAddressCaseSensitive;
 
-	public MusiUserManager() {
+	public CommunityUserManager() {
 		emailAddressCaseSensitive = true;
 	}
 
