@@ -82,6 +82,7 @@ public class SequencerFactory {
 			JdbcSequencer sequencer = new JdbcSequencer(name, blockSize);
 			sequencer.setDataSource(dataSource);
 			sequencer.setSqlConfiguration(sqlConfiguration);	
+			
 			sequencersByName.put(name, sequencer);
 			
 			return sequencer.getNextValue();

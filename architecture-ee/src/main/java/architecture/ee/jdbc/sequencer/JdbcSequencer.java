@@ -148,6 +148,9 @@ public class JdbcSequencer implements Sequencer {
             	DataSourceUtils.applyTransactionTimeout(pstmt, getDataSource());
             	pstmt.setString(1, name);
             	rs = pstmt.executeQuery();
+            	
+            	//logger.debug(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_BY_NAME").getSql());
+            	
             	if( rs.next() ){
             		this.type = rs.getInt(1);
             		currentID = rs.getLong(3);
@@ -162,8 +165,12 @@ public class JdbcSequencer implements Sequencer {
                 pstmt = con.prepareStatement(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_BY_ID").getSql());
     	        DataSourceUtils.applyTransactionTimeout(pstmt, getDataSource());         
     	        pstmt.setInt(1, type);
+    	        
     	        rs = pstmt.executeQuery();
-                if (rs.next()) {
+                
+    	        //logger.debug(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_BY_NAME").getSql());
+    	        
+    	        if (rs.next()) {
                     currentID = rs.getLong(1);
                 }
                 else {
@@ -224,8 +231,11 @@ public class JdbcSequencer implements Sequencer {
         	if(type == 0 && !StringUtils.isNullOrEmpty(name)){
         		pstmt = con.prepareStatement(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_MAX_ID").getSql());   
         		ResultSet rs = pstmt.executeQuery();
+        		
+        		//logger.debug(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_MAX_ID").getSql());
+
         		if( rs.next() ){
-        			rs.getInt(1);
+        			this.type = rs.getInt(1);
         		}else{
         			this.type = 1 ;
         		}
@@ -234,10 +244,10 @@ public class JdbcSequencer implements Sequencer {
         	}        	
         	
             pstmt = con.prepareStatement(getBoundSql("ARCHITECTURE_FRAMEWORK.CREATE_SEQUENCER").getSql());
-            pstmt.setInt(1, type);
+            pstmt.setInt(1, this.type);
 			pstmt.setLong(1, 1L);
 			pstmt.setString(2, this.name);
-			pstmt.setInt(3, type );
+			pstmt.setInt(3, this.type );
 			
             pstmt.execute();
         }
