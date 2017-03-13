@@ -24,4 +24,12 @@
     <beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></beans:bean>
     
     
+    
+    <beans:bean id="roleManager" class="architecture.community.user.CommunityRoleManager"  />		
+		
+	<beans:bean id="roleDao" class="architecture.community.user.dao.JdbcRoleDao" p:dataSource-ref="dataSource" ></beans:bean>
+	
+    
+    
+    
 </beans:beans> 

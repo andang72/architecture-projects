@@ -2,7 +2,7 @@ package architecture.community.user;
 
 import java.util.Date;
 
-public class MusiUser implements User {
+public class CommunityUser implements User {
 
 	private long userId;
 	
