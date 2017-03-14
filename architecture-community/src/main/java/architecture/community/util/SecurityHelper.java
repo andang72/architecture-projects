@@ -60,17 +60,20 @@ public class SecurityHelper {
 	/**
 	 * 인자로 전달된 role 을 현재 사용자가 가지고 있는지 여부를 확인.
 	 * 
-	 * @param role
+	 * @param roles
 	 * @return
 	 */
-	public static boolean isUserInRole(String role) {
+	public static boolean isUserInRole(String roles) {
+		
 		boolean flag = false;
 		boolean returnFlag = false;
-		if( StringUtils.isEmpty(role)){
+		
+		if( StringUtils.isEmpty(roles)){
 			returnFlag = true;
 		}
-		if( !StringUtils.isNullOrEmpty(role)){
-			for(String token : StringUtils.split(role, ",")){
+		
+		if( !StringUtils.isNullOrEmpty(roles)){
+			for(String token : StringUtils.tokenizeToStringArray(roles, ",")){
 				flag = isGranted(token);
 				if(flag == true){
 					returnFlag = true;
@@ -96,6 +99,7 @@ public class SecurityHelper {
 	public static void refreshUserToken(){
 		
 		User user = getUser();
+		
 		if( !user.isAnonymous() ){
 			CommunityUserDetailsService detailsService = ApplicationHelper.getComponent(CommunityUserDetailsService.class);
 			UserDetails details = detailsService.loadUserByUsername(user.getUsername());

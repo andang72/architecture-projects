@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
 
+import architecture.community.i18n.CommunityLogLocalizer;
 import architecture.community.user.DefaultRole;
 import architecture.community.user.Role;
 import architecture.ee.jdbc.sequencer.SequencerFactory;
@@ -96,27 +97,30 @@ public class JdbcRoleDao extends ExtendedJdbcDaoSupport implements RoleDao {
 
 	@Override
 	public void deleteRole(Role role) {
+		
+		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.DELETE_ALL_USER_ROLES").getSql(), new SqlParameterValue(Types.NUMERIC, role.getRoleId()));
+		
 		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.DELETE_ROLE").getSql(), new SqlParameterValue(Types.NUMERIC, role.getRoleId()));
+		
 	}
 
 	public Role getRoleById(long roleId) {
-		
 		Role role = null;
 		try {
 			role = getExtendedJdbcTemplate().queryForObject(getBoundSql("COMMUNITY_USER.SELECT_ROLE_BY_ID").getSql(),
 					roleMapper, new SqlParameterValue(Types.NUMERIC, roleId));
 		} catch (IncorrectResultSizeDataAccessException e) {
 			if (e.getActualSize() > 1) {
-				//logger.warn(CommunityLogLocalizer.format("010008", userId));
+				logger.warn(CommunityLogLocalizer.format("010203", roleId));
 				throw e;
 			}
 		} catch (DataAccessException e) {
-			//logger.error(CommunityLogLocalizer.format("010007", userId), e);
+			logger.warn(CommunityLogLocalizer.format("010204", roleId));
 		}
 		return role;
 	}
 
-	@Override
+
 	public Role getRoleByName(String name, boolean caseSensetive) {
 		Role role = null;
 		try {
@@ -124,11 +128,11 @@ public class JdbcRoleDao extends ExtendedJdbcDaoSupport implements RoleDao {
 					roleMapper, new SqlParameterValue(Types.VARCHAR, name));
 		} catch (IncorrectResultSizeDataAccessException e) {
 			if (e.getActualSize() > 1) {
-				//logger.warn(CommunityLogLocalizer.format("010008", userId));
+				logger.warn(CommunityLogLocalizer.format("010203", name));
 				throw e;
 			}
 		} catch (DataAccessException e) {
-			//logger.error(CommunityLogLocalizer.format("010007", userId), e);
+			logger.warn(CommunityLogLocalizer.format("010204", name));
 		}
 		return role;
 	}
@@ -145,20 +149,22 @@ public class JdbcRoleDao extends ExtendedJdbcDaoSupport implements RoleDao {
 
 	@Override
 	public List<Long> getUserRoleIds(long userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return getExtendedJdbcTemplate().queryForList(getBoundSql("COMMUNITY_USER.SELECT_USER_ROLE_IDS").getSql(), Long.class, new SqlParameterValue(Types.NUMERIC, userId));
 	}
 
 	@Override
+	public void removeUserRoles(long userId) {
+		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.REMOVE_USER_ROLES").getSql(), new SqlParameterValue(Types.NUMERIC, userId));
+	}
+	
+	@Override
 	public void removeUserRole(long roleId, long userId) {
-		// TODO Auto-generated method stub
-		
+		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.REMOVE_USER_ROLE").getSql(), new SqlParameterValue(Types.NUMERIC, roleId), new SqlParameterValue(Types.NUMERIC, userId));
 	}
 
 	@Override
 	public void addUserRole(long roleId, long userId) {
-		// TODO Auto-generated method stub
-		
+		getExtendedJdbcTemplate().update(getBoundSql("COMMUNITY_USER.ADD_USER_ROLE").getSql(), new SqlParameterValue(Types.NUMERIC, roleId), new SqlParameterValue(Types.NUMERIC, userId));
 	}
 
 }

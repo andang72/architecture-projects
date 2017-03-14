@@ -1,10 +1,11 @@
 package architecture.community.user.event.listener;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.google.common.eventbus.Subscribe;
@@ -12,7 +13,7 @@ import com.google.common.eventbus.Subscribe;
 import architecture.community.user.event.UserActivityEvent;
 import architecture.ee.service.ConfigService;
 
-public class UserActivityEventListener implements InitializingBean{
+public class UserActivityEventListener {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -20,14 +21,21 @@ public class UserActivityEventListener implements InitializingBean{
 	@Qualifier("configService")
 	private ConfigService configService;
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
+	@PostConstruct
+	public void initialize() throws Exception {
 		if( configService != null)
 		{
 			configService.registerEventListener(this);
 		}
 	}
 	
+	@PreDestroy
+	public void destory(){
+		if( configService != null)
+		{
+			configService.unregisterEventListener(this);
+		}
+	}
 	
 	@Subscribe 
 	public void handelUserActivityEvent(UserActivityEvent e) {

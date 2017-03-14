@@ -48,8 +48,9 @@ public class UserManagerTest {
 		User newUesr = new UserTemplate("king", "1234", "킹", false, "king@king.com", false);
 		log.debug("---------------" + newUesr);
 		User existUser = userManager.getUser(newUesr);
-		log.debug("USER:" + existUser );
 		
+		log.debug("USER:" + existUser );
+		/*
 		if( existUser != null){
 			log.debug("now remove : " + existUser );
 			try {
@@ -57,7 +58,8 @@ public class UserManagerTest {
 			} catch (UserNotFoundException e) {
 				log.error("ERROR", e );
 			}	
-		}
+		}*/
+		
 		try {
 			userManager.createUser(newUesr);
 		} catch (Exception e) {

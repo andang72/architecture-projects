@@ -40,9 +40,7 @@ public class CommunityAuthenticationSuccessHandler extends SimpleUrlAuthenticati
 			view.setModelKey("item");
 			try {
 				createJsonView().render(model, request, response);
-			} catch (Exception e) {
-
-			}		
+			} catch (Exception e) {}		
 			return;
 		}
 

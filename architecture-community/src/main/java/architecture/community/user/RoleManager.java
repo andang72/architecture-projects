@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface RoleManager {
 
-	public abstract int getTotalRoleCount();
+	public abstract int getRoleCount();
 	
 	public abstract List<Role> getRoles();
 	
@@ -21,6 +21,8 @@ public interface RoleManager {
 	public Role getRole(long roleId) throws RoleNotFoundException;;
 	
 	public abstract List<Role> getFinalUserRoles(long userId);
+	
+	public List<Role> getUserRoles(User user);
 	
 	public abstract void grantRole(Role role, User user);
 	

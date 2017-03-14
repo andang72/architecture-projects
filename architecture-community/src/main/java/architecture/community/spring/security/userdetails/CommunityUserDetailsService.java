@@ -14,12 +14,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import architecture.community.user.Role;
+import architecture.community.user.RoleManager;
 import architecture.community.user.User;
 import architecture.community.user.UserManager;
 import architecture.community.user.UserNotFoundException;
 import architecture.community.util.CommunityConstants;
 import architecture.ee.service.ConfigService;
-import architecture.ee.spring.event.EventSupport;
 import architecture.ee.util.StringUtils;
 public class CommunityUserDetailsService implements UserDetailsService {
 
@@ -28,6 +29,11 @@ public class CommunityUserDetailsService implements UserDetailsService {
 	@Inject
 	@Qualifier("userManager")
 	private UserManager userManager;	
+	
+	@Inject
+	@Qualifier("roleManager")
+	private RoleManager roleManager;	
+	
 	
 	@Inject
 	@Qualifier("configService")
@@ -54,8 +60,11 @@ public class CommunityUserDetailsService implements UserDetailsService {
 		{
 			authority = authority.trim();
 		    if (!roles.contains(authority)) {
-			roles.add(authority);
+		    	roles.add(authority);
 		    }
+		}
+		for(Role role : roleManager.getFinalUserRoles(user.getUserId())){
+			roles.add(role.getName());
 		}
 		return AuthorityUtils.createAuthorityList(StringUtils.toStringArray(roles));
 	}

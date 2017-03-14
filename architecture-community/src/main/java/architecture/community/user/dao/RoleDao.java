@@ -22,6 +22,8 @@ public interface RoleDao {
 	
 	public abstract List<Long> getUserRoleIds(long userId);
 	
+	public abstract void removeUserRoles(long userId);
+	
 	public abstract void removeUserRole(long roleId, long userId);
 	
 	public abstract void addUserRole(long roleId, long userId);
