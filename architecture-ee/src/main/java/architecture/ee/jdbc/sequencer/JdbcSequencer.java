@@ -75,10 +75,17 @@ public class JdbcSequencer implements Sequencer {
         if( StringUtils.isNullOrEmpty( name ))
         	throw new IllegalArgumentException(CommonLogLocalizer.getMessage("003101"));        
     }
+      
     
-    
-    
-    public int getType() {
+    public JdbcSequencer(int type, String name, int size) {
+		this.type = type;
+		this.name = name;
+		this.blockSize = size;
+        this.currentId = 0l;
+        this.maxId = 0L;
+	}
+
+	public int getType() {
 		return type;
 	}
 
@@ -231,9 +238,6 @@ public class JdbcSequencer implements Sequencer {
         	if(type == 0 && !StringUtils.isNullOrEmpty(name)){
         		pstmt = con.prepareStatement(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_MAX_ID").getSql());   
         		ResultSet rs = pstmt.executeQuery();
-        		
-        		//logger.debug(getBoundSql("ARCHITECTURE_FRAMEWORK.SELECT_SEQUENCER_MAX_ID").getSql());
-
         		if( rs.next() ){
         			this.type = rs.getInt(1);
         		}else{

@@ -23,7 +23,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface MaxValue {
-	 
-	String value() default "";
+	
+	int id() default 0;	
+	String name() default "";
 	 
 }

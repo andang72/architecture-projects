@@ -66,10 +66,18 @@ public class SequencerFactory {
 		this.dataSource = dataSource;
 	}
 
+	public int getType(String name){
+		if( StringUtils.isNullOrEmpty( name ))
+			throw new IllegalArgumentException(CommonLogLocalizer.getMessage("003101"));		
+		if (sequencersByName.containsKey(name)) {
+			return sequencersByName.get(name).getType();
+		}
+		return -1;
+	}
+	
 	public long getNextValue(String name) {
 		if( StringUtils.isNullOrEmpty( name ))
-			throw new IllegalArgumentException(CommonLogLocalizer.getMessage("003101"));
-		
+			throw new IllegalArgumentException(CommonLogLocalizer.getMessage("003101"));		
 		if (sequencersByName.containsKey(name)) {
 			return sequencersByName.get(name).getNextValue();
 		} else {
@@ -105,22 +113,36 @@ public class SequencerFactory {
 			JdbcSequencer sequencer = new JdbcSequencer(type, blockSize);
 			sequencer.setDataSource(dataSource);
 			sequencer.setSqlConfiguration(sqlConfiguration);		
-			sequencersById.put(type, sequencer);
-			
+			sequencersById.put(type, sequencer);			
 			return sequencer.getNextValue();
 		}
 	}
+	
+	public long getNextValue(int type, String name){		
+		if (sequencersByName.containsKey(name)) {
+			return sequencersByName.get(name).getNextValue();		
+		}
+		
+		int blockSize = 1 ;		
+		if(configService!=null)
+			blockSize = configService.getLocalProperty("services.sequencer.blockSize", blockSize);			
+		JdbcSequencer sequencer = new JdbcSequencer(type, name, blockSize);;
+		sequencer.setDataSource(dataSource);
+		sequencer.setSqlConfiguration(sqlConfiguration);		
+		sequencersByName.put(name, sequencer);		
+		return sequencer.getNextValue();
+	}
 
 	public long getNextValue(Object object) {
-		MaxValue id = object.getClass().getAnnotation(MaxValue.class);
-		if (id == null) {
+		MaxValue max = object.getClass().getAnnotation(MaxValue.class);
+		if (max == null) {
 			String msg = CommonLogLocalizer.format("003106", object.getClass());
 			logger.error(msg);
 			throw new IllegalArgumentException(msg);
-		}
-		return getNextValue(id.value());
+		}		
+		return getNextValue(max.id(), max.name());
+		
 	}
-
 	
 	public static class Builder{		
 		public static SequencerFactory build() {

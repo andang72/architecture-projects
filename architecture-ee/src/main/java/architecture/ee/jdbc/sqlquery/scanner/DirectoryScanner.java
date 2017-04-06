@@ -131,10 +131,12 @@ public class DirectoryScanner {
 	}
 
 	public void destroy() throws Exception {	
-		log.debug("stop sqlquery directory scanner...");
+		
 		if( monitor != null)
 		{
+			log.debug("stopping sqlquery directory scanner...");
 			monitor.stop();
+			log.debug("stopped sqlquery directory scanner...");
 		}
 	}
 
@@ -189,7 +191,7 @@ public class DirectoryScanner {
 	}
 	
 	public void start(File file ) throws Exception {
-		log.debug("start sqlquery directory scanner...");
+		log.debug("starting '{0}' file alter observer ...", file.getAbsolutePath());
 		if( monitor == null)
 		{			
 			monitor = new FileAlterationMonitor(pollIntervalMillis);	
@@ -198,6 +200,7 @@ public class DirectoryScanner {
 			monitor.addObserver(observer);			
 		}
 		monitor.start();
+		log.debug("started '{0}' file alter observer ...", file.getAbsolutePath());
 	}
 	
 }

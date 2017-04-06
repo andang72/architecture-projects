@@ -192,4 +192,6 @@ public class ExtendedJdbcTemplate extends JdbcTemplate {
 			new ScrollableResultSetExtractor<T>(getDBInfo(), rowMapper,startIndex, numResults));
 	}
 
+
+
 }
