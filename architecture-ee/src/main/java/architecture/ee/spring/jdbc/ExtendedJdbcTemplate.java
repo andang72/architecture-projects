@@ -15,10 +15,14 @@
  */
 package architecture.ee.spring.jdbc;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +30,12 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.SqlProvider;
 import org.springframework.util.Assert;
 
@@ -192,6 +198,85 @@ public class ExtendedJdbcTemplate extends JdbcTemplate {
 			new ScrollableResultSetExtractor<T>(getDBInfo(), rowMapper,startIndex, numResults));
 	}
 
+	// *********************************************
+    // Public Methods for Script
+    // *********************************************
 
+	public Object executeScript(final boolean stopOnError, final Reader reader) {
+		return execute(new ConnectionCallback<Object>() {
+			public Object doInConnection(Connection connection)
+					throws SQLException, DataAccessException {
+				try {
+					return runScript(connection, stopOnError, reader);
+				} catch (IOException e) {
+					return null;
+				}
+			}
+		});
+	}
+	
+	protected Object runScript(Connection conn, boolean stopOnError, Reader reader) throws SQLException, IOException {
 
+		StringBuffer command = null;
+		List<Object> list = new ArrayList<Object>();
+		try {
+			LineNumberReader lineReader = new LineNumberReader(reader);
+			String line = null;
+			while ((line = lineReader.readLine()) != null) {
+				if (command == null) {
+					command = new StringBuffer();
+				}
+				String trimmedLine = line.trim();
+				if (trimmedLine.startsWith("--")) {
+					if (logger.isDebugEnabled())
+						logger.debug(trimmedLine);
+				} else if (trimmedLine.length() < 1
+						|| trimmedLine.startsWith("//")) {
+					// Do nothing
+				} else if (trimmedLine.length() < 1
+						|| trimmedLine.startsWith("--")) {
+					// Do nothing
+				} else if (trimmedLine.endsWith(";")) {
+					command.append(line.substring(0, line.lastIndexOf(";")));
+					command.append(" ");
+
+					Statement statement = conn.createStatement();
+					if (logger.isDebugEnabled()) {
+						logger.debug("Executing SQL script command [" + command + "]");
+					}
+
+					boolean hasResults = false;
+					if (stopOnError) {
+						hasResults = statement.execute(command.toString());
+					} else {
+						try {
+							statement.execute(command.toString());
+						} catch (SQLException e) {
+							if (logger.isDebugEnabled())
+								logger.error("Error executing: " + command, e);
+							throw e;
+						}
+					}
+					ResultSet rs = statement.getResultSet();
+					if (hasResults && rs != null) {
+						RowMapperResultSetExtractor<Map<String, Object>> rse = new RowMapperResultSetExtractor<Map<String, Object>>( getColumnMapRowMapper() );
+						List<Map<String, Object>> rows = rse.extractData(rs);
+						list.add(rows);
+					}
+					command = null;
+				} else {
+					command.append(line);
+					command.append(" ");
+				}
+			}
+
+			return list;
+		} catch (SQLException e) {
+			logger.error("Error executing: " + command, e);
+			throw e;
+		} catch (IOException e) {
+			logger.error("Error executing: " + command, e);
+			throw e;
+		}
+	}
 }

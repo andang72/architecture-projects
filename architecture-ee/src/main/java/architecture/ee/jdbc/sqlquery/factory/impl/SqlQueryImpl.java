@@ -15,14 +15,22 @@
  */
 package architecture.ee.jdbc.sqlquery.factory.impl;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.jdbc.core.CallableStatementCreatorFactory;
+import org.springframework.jdbc.core.SqlOutParameter;
+import org.springframework.jdbc.core.SqlParameter;
 
 import com.google.common.base.Preconditions;
 
 import architecture.ee.jdbc.sqlquery.SqlQuery;
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
 import architecture.ee.jdbc.sqlquery.mapping.BoundSql;
+import architecture.ee.jdbc.sqlquery.mapping.ParameterMapping;
 import architecture.ee.spring.jdbc.ExtendedJdbcDaoSupport;
 
 
@@ -111,6 +119,50 @@ public class SqlQueryImpl extends ExtendedJdbcDaoSupport implements SqlQuery {
 		Preconditions.checkArgument(maxResults > 0, "maxResults is %s but it must be greater then zero.", maxResults);
 		BoundSql boundSql = getBoundSql(statemenKey);
 		return getExtendedJdbcTemplate().query(boundSql.getSql(), startIndex, maxResults ,elementType, params);
+	}
+
+	@Override
+	public int executeUpdate(String statemenKey) {
+		BoundSql boundSql = getBoundSql(statemenKey);
+		return getExtendedJdbcTemplate().update(boundSql.getSql());
+	}
+
+	@Override
+	public int executeUpdate(String statemenKey, Object... parameters) {
+		BoundSql boundSql = getBoundSql(statemenKey);
+		return getExtendedJdbcTemplate().update(boundSql.getSql(), parameters);
+	}
+
+	@Override
+	public Object executeScript(String statemenKey, boolean stopOnError) {
+		BoundSql boundSql = getBoundSql(statemenKey);
+		return getExtendedJdbcTemplate().executeScript(stopOnError, new StringReader(boundSql.getSql()));
+	}
+
+	@Override
+	public Object call(String statemenKey, Object... parameters) {
+		BoundSql boundSql = getBoundSql(statemenKey);		
+		List<SqlParameter> declaredParameters = new ArrayList<SqlParameter>();
+		Map<String, Object> paramsToUse = new HashMap<String, Object>();
+		
+		// 메핑 파라메터에 따라 INPUT 과 OUTPU 을 설정한다.
+		for( ParameterMapping mapping : boundSql.getParameterMappings()){			
+			mapping.getProperty(); 
+			mapping.getJdbcType();
+			mapping.getMode();			
+			if( mapping.getMode() == ParameterMapping.Mode.IN ){				
+				SqlParameter input = new SqlParameter(mapping.getProperty(), mapping.getJdbcType().ordinal());
+				declaredParameters.add(input);
+				paramsToUse.put(mapping.getProperty(), parameters[mapping.getIndex() -1 ]);
+				
+			}else if (mapping.getMode() == ParameterMapping.Mode.OUT){
+				SqlOutParameter output = new SqlOutParameter(mapping.getProperty(), mapping.getJdbcType().ordinal());
+				declaredParameters.add(output);
+			}			
+		}		
+		CallableStatementCreatorFactory callableStatementFactory = new CallableStatementCreatorFactory(boundSql.getSql(), declaredParameters);		
+		return getExtendedJdbcTemplate().call(callableStatementFactory.newCallableStatementCreator(paramsToUse), declaredParameters );
+	
 	}
 
 }

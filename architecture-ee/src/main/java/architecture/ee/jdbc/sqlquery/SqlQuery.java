@@ -68,11 +68,24 @@ public interface SqlQuery {
     
     public List<Map<String, Object>> queryForList(String statemenKey, int startIndex, int maxResults);
     
-    public List<Map<String, Object>> queryForList(String statemenKey, int startIndex, int maxResults, Object... params );
-    
+    public List<Map<String, Object>> queryForList(String statemenKey, int startIndex, int maxResults, Object... params );    
     
     public <T> T queryForObject(String statemenKey, Class<T> elementType, Object... params );
     
     public Map<String, Object> queryForObject(String statemenKey, Object... params );
+    
+	public int executeUpdate(String statement);
+	
+	public int executeUpdate(String statement, Object... params);
+	
+	/**
+	 * 스크립트 모드로 쿼리를 실행한다.
+	 * @param statement
+	 * @return
+	 */
+	public Object executeScript(String statemenKey, boolean stopOnError) ;
+	
+	public Object call(String statement, Object... params);
+	
     
 }

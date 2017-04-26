@@ -15,14 +15,31 @@
  */
 package architecture.ee.spring.jdbc;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
+import org.springframework.jdbc.support.lob.LobHandler;
 
 import architecture.ee.jdbc.sqlquery.factory.Configuration;
 import architecture.ee.jdbc.sqlquery.mapping.BoundSql;
@@ -32,9 +49,11 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 
 	@Autowired
 	@Qualifier("sqlConfiguration")
-    private Configuration sqlConfiguration;
-	
+	private Configuration sqlConfiguration;
+
 	protected Logger logger = LoggerFactory.getLogger(getClass());
+
+	private LobHandler lobHandler = new DefaultLobHandler();
 
 	public ExtendedJdbcDaoSupport() {
 		super();
@@ -62,6 +81,14 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		return new ExtendedJdbcTemplate(dataSource);
 	}
 
+	public LobHandler getLobHandler() {
+		return lobHandler;
+	}
+
+	public void setLobHandler(LobHandler lobHandler) {
+		this.lobHandler = lobHandler;
+	}
+
 	public BoundSql getBoundSql(String statement) {
 		if (isSetConfiguration()) {
 			MappedStatement stmt = sqlConfiguration.getMappedStatement(statement);
@@ -69,7 +96,7 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		}
 		return null;
 	}
-	
+
 	public BoundSql getBoundSql(String statement, Object... params) {
 		if (isSetConfiguration()) {
 			MappedStatement stmt = sqlConfiguration.getMappedStatement(statement);
@@ -77,7 +104,6 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		}
 		return null;
 	}
-
 
 	public BoundSql getBoundSqlWithAdditionalParameter(String statement, Object additionalParameter) {
 		if (isSetConfiguration()) {
@@ -87,7 +113,8 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 		return null;
 	}
 
-	public BoundSql getBoundSqlWithAdditionalParameter(String statement, Object parameters,	Object additionalParameter) {
+	public BoundSql getBoundSqlWithAdditionalParameter(String statement, Object parameters,
+			Object additionalParameter) {
 		if (isSetConfiguration()) {
 			MappedStatement stmt = sqlConfiguration.getMappedStatement(statement);
 			return stmt.getBoundSql(parameters, additionalParameter);
@@ -98,12 +125,12 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 	public ExtendedJdbcTemplate getExtendedJdbcTemplate() {
 		return (ExtendedJdbcTemplate) getJdbcTemplate();
 	}
-
+		
 	public boolean isSetConfiguration() {
 		if (sqlConfiguration == null)
-		    return false;
+			return false;
 		else
-		    return true;
-	    }
+			return true;
+	}
 
 }
