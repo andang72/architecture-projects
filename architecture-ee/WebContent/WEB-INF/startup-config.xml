@@ -1,59 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<startup-config>
-  <setup>
-    <complete>false</complete>
-  </setup>
-  <license/>
-  <security>
-  	<encrypt>
-  		<algorithm>Blowfish</algorithm>
-  		<key><current/></key>
-  		<property>
-  			<name>password</name>
-  			<name>username</name>
-  		</property>
-  	</encrypt>  	
-    <authentication>
-      <encoding>
-        <algorithm>SHA-256</algorithm>
-      </encoding>
-    </authentication>
-  </security>
-  <services>
-  	<sql>
-  		<location>sql</location>  		
-  	</sql>
+
+<startup-config> 
+  <setup> 
+    <complete>false</complete> 
+  </setup>  
+  <license/>  
+  <security> 
+    <encrypt> 
+      <algorithm>Blowfish</algorithm>  
+      <key> 
+        <current/> 
+      </key>  
+      <property> 
+        <name>password</name>  
+        <name>username</name> 
+      </property> 
+    </encrypt>  
+    <authentication> 
+      <encoding> 
+        <algorithm>SHA-256</algorithm> 
+      </encoding> 
+    </authentication> 
+  </security>  
+  <services> 
+    <sql> 
+      <location>sql</location> 
+    </sql> 
   </services>  
-  <database>
-  	<default>
-  	    <!-- 
+  <database> 
+    <default> 
+      <!-- 
   		<jndiDataSourceProvider>
   			<jndiName></jndiName>
   		</jndiDataSourceProvider>
-  		-->
-  		<pooledDataSourceProvider>
-			<driverClassName></driverClassName>
-			<url></url>
-			<username></username>
-			<password></password>
-  			<connectionProperties>
-  				<initialSize>1</initialSize>
-  				<maxActive>8</maxActive>
-	  			<maxIdle>8</maxIdle>
-	  			<maxWait>-1</maxWait>
-	  			<minIdle>0</minIdle>
-	  			<testOnBorrow>true</testOnBorrow>
-	  			<testOnReturn>false</testOnReturn>
-	  			<testWhileIdle>false</testWhileIdle>
-	  			<validationQuery>select 1 from dual</validationQuery>
-	  			<!-- 
+  		-->  
+      <pooledDataSourceProvider> 
+        <driverClassName>oracle.jdbc.OracleDriver</driverClassName>  
+        <url>jdbc:oracle:thin:@//222.122.47.196:1521/PODODB</url>  
+        <username>U_PORTAL</username>  
+        <password>podoq23$</password>  
+        <connectionProperties> 
+          <initialSize>1</initialSize>  
+          <maxActive>8</maxActive>  
+          <maxIdle>8</maxIdle>  
+          <maxWait>-1</maxWait>  
+          <minIdle>0</minIdle>  
+          <testOnBorrow>true</testOnBorrow>  
+          <testOnReturn>false</testOnReturn>  
+          <testWhileIdle>false</testWhileIdle>  
+          <validationQuery>select 1 from dual</validationQuery>  
+          <!-- 
 	  			<timeBetweenEvictionRunsMillis></timeBetweenEvictionRunsMillis>
 	  			<minEvictableIdleTimeMillis></minEvictableIdleTimeMillis>
 	  			<numTestsPerEvictionRun></numTestsPerEvictionRun>  
 	  			<defaultAutoCommit>false</defaultAutoCommit>	
-	  			-->
-  			</connectionProperties>
-  		</pooledDataSourceProvider>
-  	</default>
-  </database>  
+	  			--> 
+        </connectionProperties> 
+      </pooledDataSourceProvider> 
+    </default> 
+  </database> 
 </startup-config>
