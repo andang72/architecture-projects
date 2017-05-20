@@ -25,85 +25,77 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.support.JdbcUtils;
 
 public class ExtendedJdbcUtils extends JdbcUtils {
-	
-	public enum DB {		
-		ORACLE, 
-		POSTGRESQL, 
-		MYSQL, 
-		DB2, 
-		SQLSERVER, 
-		UNKNOWN;		
-		
-		 boolean scrollResultsSupported = false;		
-		 boolean fetchSizeSupported = false;
-		 
-		 
+
+	public enum DB {
+		ORACLE, POSTGRESQL, MYSQL, DB2, SQLSERVER, UNKNOWN;
+
+		boolean scrollResultsSupported = false;
+		boolean fetchSizeSupported = false;
+
 	}
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(ExtendedJdbcUtils.class);
 
-	public static DB extractDB(Connection con ){
+	public static DB extractDB(Connection con) {
 		DB db = DB.UNKNOWN;
-		
+
 		try {
 			DatabaseMetaData dbmd = con.getMetaData();
-			String dbName = commonDatabaseName( dbmd.getDatabaseProductName() ).toLowerCase();
+			String dbName = commonDatabaseName(dbmd.getDatabaseProductName()).toLowerCase();
 			String driverName = dbmd.getDriverName().toLowerCase();
 			boolean scrollResultsSupported = scrollResultsSupported(dbmd);
 			boolean fetchSizeSupported = true;
-			if( dbName.indexOf("oracle") != -1 )
-			{
+			if (dbName.indexOf("oracle") != -1) {
 				db = DB.ORACLE;
-			}else if ( dbName.indexOf("db2") != -1){
+			} else if (dbName.indexOf("db2") != -1) {
 				db = DB.DB2;
-			}else if (dbName.indexOf("mysql") != -1){
+			} else if (dbName.indexOf("mysql") != -1) {
 				db = DB.MYSQL;
-			}else if ( dbName.indexOf("sql server") != -1){
+			} else if (dbName.indexOf("sql server") != -1) {
 				db = DB.SQLSERVER;
 				if (driverName.indexOf("una") != -1) {
 					fetchSizeSupported = true;
-				}else if (driverName.indexOf("jtds") != -1) {
+				} else if (driverName.indexOf("jtds") != -1) {
 					fetchSizeSupported = true;
 				} else {
 					fetchSizeSupported = false;
 					scrollResultsSupported = false;
 				}
 
-			}else if (dbName.indexOf("postgres") != -1){
+			} else if (dbName.indexOf("postgres") != -1) {
 				db = DB.POSTGRESQL;
 				fetchSizeSupported = false;
 			}
 			db.scrollResultsSupported = scrollResultsSupported;
 			db.fetchSizeSupported = fetchSizeSupported;
-			
+
 		} catch (SQLException ex) {
 			logger.debug("JDBC driver 'extractDB' method threw exception", ex);
-		}		
+		}
 		return db;
 	}
-	
-	public static boolean scrollResultsSupported(Connection con){		
-		try{
+
+	public static boolean scrollResultsSupported(Connection con) {
+		try {
 			DatabaseMetaData dbmd = con.getMetaData();
 			scrollResultsSupported(dbmd);
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			logger.debug("JDBC driver 'scrollResultsSupported' method threw exception", ex);
 		}
 		return false;
 	}
-	
-	public static boolean scrollResultsSupported(DatabaseMetaData dbmd){		
-		try{
+
+	public static boolean scrollResultsSupported(DatabaseMetaData dbmd) {
+		try {
 			if (dbmd != null) {
 				if (dbmd.supportsResultSetType((ResultSet.TYPE_SCROLL_INSENSITIVE))) {
 					logger.debug("JDBC driver supports scroll results");
 					return true;
-				}
-				else {
+				} else {
 					logger.debug("JDBC driver does not support scroll results");
 				}
 			}
-		}catch (SQLException ex) {
+		} catch (SQLException ex) {
 			logger.debug("JDBC driver 'scrollResultsSupported' method threw exception", ex);
 		}
 		return false;
