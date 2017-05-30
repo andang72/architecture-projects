@@ -150,18 +150,21 @@ public class ExtendedJdbcTemplate extends JdbcTemplate {
 	// *********************************************
     // Public Methods for Scrollable
     // ********************************************
-
+	
+	private DB db = null;
+	
 	public ExtendedJdbcTemplate(DataSource dataSource, boolean lazyInit) {
 		super(dataSource, lazyInit);
 	}	
 	
 	public DB getDBInfo(){
-		DB db = DB.UNKNOWN;		
-		try {
-			db = ExtendedJdbcUtils.extractDB(getDataSource().getConnection());
-		} catch (SQLException e) {
-		}		
-		return db;
+		if( db == null){
+			try {
+				db = ExtendedJdbcUtils.extractDB(getDataSource().getConnection());
+			} catch (SQLException e) {
+			}	
+		}
+		return db == null ? DB.UNKNOWN : db;
 	}	
 	
 	public  List<Map<String, Object>> query( String sql, int startIndex, int numResults) throws DataAccessException {			

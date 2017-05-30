@@ -15,28 +15,13 @@
  */
 package architecture.ee.spring.jdbc;
 
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
-import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
@@ -51,7 +36,7 @@ public class ExtendedJdbcDaoSupport extends JdbcDaoSupport {
 	@Qualifier("sqlConfiguration")
 	private Configuration sqlConfiguration;
 
-	//protected Logger logger = LoggerFactory.getLogger(getClass());
+	final protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	private LobHandler lobHandler = new DefaultLobHandler();
 
