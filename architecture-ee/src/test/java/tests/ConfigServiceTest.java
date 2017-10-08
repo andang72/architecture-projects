@@ -72,7 +72,11 @@ public class ConfigServiceTest {
 		if( configService.getApplicationProperty("welcome.message", null) == null )
 			configService.setApplicationProperty("welcome.message", "안녕하신가요 !!");
 		
-		log.debug( "LOCALE {}, TIMEZONE {}, ENCODING {}" , configService.getLocale().getDisplayName(), configService.getTimeZone().getDisplayName() , configService.getCharacterEncoding());
+		log.debug( 
+				"LOCALE {}, TIMEZONE {}, ENCODING {}" , 
+				configService.getLocale().getDisplayName(), 
+				configService.getTimeZone().getDisplayName() , 
+				configService.getCharacterEncoding());
 	}
 	
 	class PropertyChangeEventListener {
